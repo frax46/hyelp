@@ -9,59 +9,110 @@ interface AddressWithReviews {
   state: string;
   zipCode: string;
   formattedAddress: string;
-  reviews: { id: string }[];
+  reviews: {
+    id: string;
+    createdAt: string;
+    isAnonymous: boolean;
+    averageScore?: number;
+    _count?: {
+      answers: number;
+    };
+  }[];
+  _count?: {
+    reviews: number;
+  };
+  reviewCount?: number;
+  averageRating?: number;
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const query = searchParams.get("q");
+    const searchParams = request.nextUrl.searchParams;
+    const query = searchParams.get("query");
     
-    if (!query) {
-      return NextResponse.json({ error: "No search query provided" }, { status: 400 });
+    if (!query || query.length < 3) {
+      return NextResponse.json({ error: "Search query must be at least 3 characters" }, { status: 400 });
     }
     
-    // Format the address to match our stored format
-    // This is a simplified version - in a real app, you'd have a more robust solution
-    const formattedQuery = query.toLowerCase().trim();
-    
-    // Search for addresses
+    // Search for addresses that match the query
     const addresses = await prisma.address.findMany({
       where: {
         OR: [
-          { formattedAddress: { contains: formattedQuery, mode: "insensitive" } },
-          { streetAddress: { contains: formattedQuery, mode: "insensitive" } },
-          { city: { contains: formattedQuery, mode: "insensitive" } },
+          { streetAddress: { contains: query, mode: "insensitive" } },
+          { city: { contains: query, mode: "insensitive" } },
+          { state: { contains: query, mode: "insensitive" } },
+          { zipCode: { contains: query, mode: "insensitive" } },
+          { formattedAddress: { contains: query, mode: "insensitive" } },
         ],
       },
-      take: 5, // Limit results
-      select: {
-        id: true,
-        streetAddress: true,
-        city: true,
-        state: true,
-        zipCode: true,
-        formattedAddress: true,
+      include: {
         reviews: {
           select: {
             id: true,
+            createdAt: true,
+            isAnonymous: true,
+            answers: {
+              select: {
+                score: true,
+                question: {
+                  select: {
+                    id: true,
+                    text: true,
+                  }
+                }
+              }
+            },
+          },
+        },
+        _count: {
+          select: {
+            reviews: true,
           },
         },
       },
+      orderBy: {
+        city: "asc",
+      },
+      take: 10, // Limit results to 10 addresses
     });
     
-    const results = addresses.map((address: AddressWithReviews) => ({
-      ...address,
-      reviewCount: address.reviews.length,
-      reviews: undefined, // Remove the reviews array
-    }));
-    
-    return NextResponse.json({
-      found: results.length > 0,
-      results,
+    // Process reviews and calculate average rating for each address
+    const addressesWithRatings = addresses.map((address) => {
+      // Process each review to include its average score
+      const reviewsWithScores = address.reviews.map(review => {
+        const validAnswers = review.answers.filter(answer => answer.score > 0);
+        const totalScore = validAnswers.reduce((sum, answer) => sum + answer.score, 0);
+        const reviewAverage = validAnswers.length > 0 
+          ? parseFloat((totalScore / validAnswers.length).toFixed(1)) 
+          : 0;
+        
+        return {
+          ...review,
+          averageScore: reviewAverage,
+        };
+      });
+      
+      // Calculate average rating for the address from all review scores
+      const validReviews = reviewsWithScores.filter(review => review.averageScore > 0);
+      const totalRating = validReviews.reduce((sum, review) => sum + review.averageScore, 0);
+      const averageRating = validReviews.length > 0 
+        ? parseFloat((totalRating / validReviews.length).toFixed(1)) 
+        : 0;
+      
+      return {
+        ...address,
+        reviews: reviewsWithScores,
+        reviewCount: address._count?.reviews || 0,
+        averageRating,
+      };
     });
+    
+    return NextResponse.json(addressesWithRatings);
   } catch (error) {
     console.error("Error searching addresses:", error);
-    return NextResponse.json({ error: "Failed to search addresses" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to search addresses" },
+      { status: 500 }
+    );
   }
 } 

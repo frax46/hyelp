@@ -1,0 +1,177 @@
+warning: in the working copy of 'app/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/search/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package-lock.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/app/admin/layout.tsx b/app/admin/layout.tsx[m
+[1mindex d2d53d4..3c95326 100644[m
+[1m--- a/app/admin/layout.tsx[m
+[1m+++ b/app/admin/layout.tsx[m
+[36m@@ -1,9 +1,11 @@[m
+ import type { Metadata } from "next";[m
+[32m+[m[32mimport Link from "next/link";[m
+ import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";[m
+[32m+[m[32mimport { Montserrat, Poppins } from "next/font/google";[m
+ [m
+ export const metadata: Metadata = {[m
+[31m-  title: "Admin Dashboard",[m
+[31m-  description: "Admin section of the application",[m
+[32m+[m[32m  title: "Admin Dashboard - Hyelp",[m
+[32m+[m[32m  description: "Admin section of Hyelp",[m
+ };[m
+ [m
+ export default function AdminLayout({[m
+[36m@@ -12,10 +14,63 @@[m [mexport default function AdminLayout({[m
+   children: React.ReactNode;[m
+ }>) {[m
+   return ([m
+[31m-    <div className="w-full">[m
+[32m+[m[32m    <div className="min-h-screen flex flex-col">[m
+       <SignedIn>[m
+[31m-        {/* Only render the children if the user is signed in */}[m
+[31m-        {children}[m
+[32m+[m[32m        {/* Admin Header */}[m
+[32m+[m[32m        <header className="bg-white border-b border-gray-200 shadow-sm">[m
+[32m+[m[32m          <div className="container mx-auto px-4 py-4">[m
+[32m+[m[32m            <div className="flex items-center justify-between">[m
+[32m+[m[32m              <div className="flex items-center space-x-4">[m
+[32m+[m[32m                <Link href="/" className="text-2xl font-bold text-blue-600 font-montserrat">[m
+[32m+[m[32m                  Hyelp[m
+[32m+[m[32m                  <span className="bg-blue-600 text-white text-xs px-2 py-1 ml-2 rounded-md uppercase">[m
+[32m+[m[32m                    Admin[m
+[32m+[m[32m                  </span>[m
+[32m+[m[32m                </Link>[m
+[32m+[m[32m              </div>[m
+[32m+[m[32m              <nav>[m
+[32m+[m[32m                <ul className="flex space-x-6">[m
+[32m+[m[32m                  <li>[m
+[32m+[m[32m                    <Link[m[41m [m
+[32m+[m[32m                      href="/admin"[m[41m [m
+[32m+[m[32m                      className="text-gray-600 hover:text-blue-600 font-medium"[m
+[32m+[m[32m                    >[m
+[32m+[m[32m                      Dashboard[m
+[32m+[m[32m                    </Link>[m
+[32m+[m[32m                  </li>[m
+[32m+[m[32m                  <li>[m
+[32m+[m[32m                    <Link[m[41m [m
+[32m+[m[32m                      href="/admin/reviews"[m[41m [m
+[32m+[m[32m                      className="text-gray-600 hover:text-blue-600 font-medium"[m
+[32m+[m[32m                    >[m
+[32m+[m[32m                      Reviews[m
+[32m+[m[32m                    </Link>[m
+[32m+[m[32m                  </li>[m
+[32m+[m[32m                  <li>[m
+[32m+[m[32m                    <Link[m[41m [m
+[32m+[m[32m                      href="/admin/questions"[m[41m [m
+[32m+[m[32m                      className="text-gray-600 hover:text-blue-600 font-medium"[m
+[32m+[m[32m                    >[m
+[32m+[m[32m                      Questions[m
+[32m+[m[32m                    </Link>[m
+[32m+[m[32m                  </li>[m
+[32m+[m[32m                </ul>[m
+[32m+[m[32m              </nav>[m
+[32m+[m[32m            </div>[m
+[32m+[m[32m          </div>[m
+[32m+[m[32m        </header>[m
+[32m+[m[41m        [m
+[32m+[m[32m        {/* Main Content */}[m
+[32m+[m[32m        <main className="flex-grow bg-gray-50">[m
+[32m+[m[32m          {children}[m
+[32m+[m[32m        </main>[m
+[32m+[m[41m        [m
+[32m+[m[32m        {/* Admin Footer */}[m
+[32m+[m[32m        <footer className="bg-white border-t border-gray-200 py-4 text-center text-sm text-gray-500">[m
+[32m+[m[32m          <div className="container mx-auto px-4">[m
+[32m+[m[32m            <p>© {new Date().getFullYear()} Hyelp Admin Panel. All rights reserved.</p>[m
+[32m+[m[32m          </div>[m
+[32m+[m[32m        </footer>[m
+       </SignedIn>[m
+       <SignedOut>[m
+         {/* Redirect to sign-in if the user is signed out */}[m
+[1mdiff --git a/app/admin/page.tsx b/app/admin/page.tsx[m
+[1mindex 6c2b170..841f70a 100644[m
+[1m--- a/app/admin/page.tsx[m
+[1m+++ b/app/admin/page.tsx[m
+[36m@@ -4,12 +4,62 @@[m [mimport { useEffect, useState } from "react";[m
+ import { useRouter } from "next/navigation";[m
+ import { useUser } from "@clerk/nextjs";[m
+ import { isAdminEmail, isAdminFeatureConfigured } from "../utils/adminAccess";[m
+[32m+[m[32mimport Link from "next/link";[m
+[32m+[m
+[32m+[m[32minterface DashboardStats {[m
+[32m+[m[32m  totalReviews: number;[m
+[32m+[m[32m  reviewGrowthRate: number;[m
+[32m+[m[32m  totalUsers: number;[m
+[32m+[m[32m  userGrowthRate: number;[m
+[32m+[m[32m  averageRating: number;[m
+[32m+[m[32m  ratingTrend: 'up' | 'down' | 'stable';[m
+[32m+[m[32m  activeQuestions: number;[m
+[32m+[m[32m  newQuestionsThisMonth: number;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32minterface RecentActivity {[m
+[32m+[m[32m  latestReview: {[m
+[32m+[m[32m    id: string;[m
+[32m+[m[32m    createdAt: string;[m
+[32m+[m[32m    address: {[m
+[32m+[m[32m      id: string;[m
+[32m+[m[32m      streetAddress: string;[m
+[32m+[m[32m      city: string;[m
+[32m+[m[32m      state: string;[m
+[32m+[m[32m    };[m
+[32m+[m[32m  } | null;[m
+[32m+[m[32m  latestUser: {[m
+[32m+[m[32m    id: string;[m
+[32m+[m[32m    email: string;[m
+[32m+[m[32m    name: string;[m
+[32m+[m[32m    createdAt: string;[m
+[32m+[m[32m  } | null;[m
+[32m+[m[32m  latestQuestion: {[m
+[32m+[m[32m    id: string;[m
+[32m+[m[32m    text: string;[m
+[32m+[m[32m    category: string;[m
+[32m+[m[32m    updatedAt: string;[m
+[32m+[m[32m  } | null;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32minterface TopAddress {[m
+[32m+[m[32m  id: string;[m
+[32m+[m[32m  address: string;[m
+[32m+[m[32m  city: string;[m
+[32m+[m[32m  reviewCount: number;[m
+[32m+[m[32m  averageRating: number;[m
+[32m+[m[32m}[m
+ [m
+ export default function AdminPage() {[m
+   const { user, isLoaded } = useUser();[m
+   const router = useRouter();[m
+   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);[m
+   const [isConfigured, setIsConfigured] = useState<boolean>(true);[m
+[32m+[m[32m  const [isLoading, setIsLoading] = useState<boolean>(true);[m
+[32m+[m[32m  const [stats, setStats] = useState<DashboardStats | null>(null);[m
+[32m+[m[32m  const [recentActivity, setRecentActivity] = useState<RecentActivity | null>(null);[m
+[32m+[m[32m  const [topAddresses, setTopAddresses] = useState<TopAddress[]>([]);[m
+[32m+[m[32m  const [error, setError] = useState<string | null>(null);[m
+ [m
+   useEffect(() => {[m
+     // Check if user is loaded[m
+[36m@@ -43,6 +93,52 @@[m [mexport default function AdminPage() {[m
+     }[m
+   }, [user, isLoaded, router]);[m
+ [m
+[32m+[m[32m  // Fetch dashboard data[m
+[32m+[m[32m  useEffect(() => {[m
+[32m+[m[32m    if (isAdmin === true) {[m
+[32m+[m[32m      fetchDashboardData();[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }, [isAdmin]);[m
+[32m+[m[41m  [m
+[32m+[m[32m  const fetchDashboardData = async () => {[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      setIsLoading(true);[m
+[32m+[m[32m      const response = await fetch('/api/admin/dashboard');[m
+[32m+[m[41m      [m
+[32m+[m[32m      if (!response.ok) {[m
+[32m+[m[32m        throw new Error('Failed to fetch dashboard data');[m
+[32m+[m[32m      }[m
+[32m+[m[41m      [m
+[32m+[m[32m      c

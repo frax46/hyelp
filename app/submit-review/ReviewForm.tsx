@@ -13,6 +13,7 @@ interface Question {
   type: "rating" | "text";
   required: boolean;
   orderIndex: number;
+  isActive: boolean;
 }
 
 interface FormData {
@@ -78,7 +79,8 @@ const SAMPLE_QUESTIONS: Question[] = [
     category: "Safety",
     type: "rating",
     required: true,
-    orderIndex: 1
+    orderIndex: 1,
+    isActive: true
   },
   {
     id: "cleanliness",
@@ -87,7 +89,8 @@ const SAMPLE_QUESTIONS: Question[] = [
     category: "Environment",
     type: "rating",
     required: true,
-    orderIndex: 2
+    orderIndex: 2,
+    isActive: true
   },
   {
     id: "noise",
@@ -96,7 +99,8 @@ const SAMPLE_QUESTIONS: Question[] = [
     category: "Environment",
     type: "rating",
     required: true,
-    orderIndex: 3
+    orderIndex: 3,
+    isActive: true
   },
   {
     id: "transport",
@@ -105,7 +109,8 @@ const SAMPLE_QUESTIONS: Question[] = [
     category: "Amenities",
     type: "rating",
     required: true,
-    orderIndex: 4
+    orderIndex: 4,
+    isActive: true
   },
   {
     id: "shopping",
@@ -114,7 +119,8 @@ const SAMPLE_QUESTIONS: Question[] = [
     category: "Amenities",
     type: "rating",
     required: true,
-    orderIndex: 5
+    orderIndex: 5,
+    isActive: true
   }
 ];
 
@@ -163,14 +169,28 @@ export default function ReviewForm({ initialAddress }: ReviewFormProps) {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        // In a real app, we would fetch from API
-        // For now, use sample questions with a simulated delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setQuestions(SAMPLE_QUESTIONS);
+        // Fetch questions from API instead of using sample data
+        const response = await fetch('/api/questions');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch questions');
+        }
+        
+        const fetchedQuestions = await response.json();
+        
+        // Filter only active questions
+        const activeQuestions = fetchedQuestions.filter((q: Question) => q.isActive);
+        
+        // Sort by order index if available
+        const sortedQuestions = activeQuestions.sort((a: Question, b: Question) => 
+          (a.orderIndex || 0) - (b.orderIndex || 0)
+        );
+        
+        setQuestions(sortedQuestions);
         
         // Initialize answers with default values
         const initialAnswers: { [key: string]: { score: number; notes: string } } = {};
-        SAMPLE_QUESTIONS.forEach((q: Question) => {
+        sortedQuestions.forEach((q: Question) => {
           initialAnswers[q.id] = { score: 0, notes: "" };
         });
         
@@ -181,6 +201,7 @@ export default function ReviewForm({ initialAddress }: ReviewFormProps) {
         
         setLoading(false);
       } catch (err) {
+        console.error('Error loading review questions:', err);
         setError('Error loading review questions. Please try again later.');
         setLoading(false);
       }
@@ -380,20 +401,45 @@ export default function ReviewForm({ initialAddress }: ReviewFormProps) {
     setIsSubmitting(true);
     
     try {
-      const standardizedAddress = getStandardizedAddress();
+      // Extract address information for API
+      const { buildingNumber, streetName, flatNumber, city, county, postcode, answers, isAnonymous } = formData;
       
-      // In a real app, this would be a POST request to an API
-      console.log("Submitting review:", {
-        ...formData,
-        standardizedAddress
+      // Create address in format expected by API
+      const streetAddress = flatNumber 
+        ? `Flat ${flatNumber}, ${buildingNumber} ${streetName}`
+        : `${buildingNumber} ${streetName}`;
+      
+      // Convert UK county to state for API compatibility
+      const state = county;
+      const zipCode = postcode;
+      
+      // Make actual API call to submit the review
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          streetAddress,
+          city,
+          state,
+          zipCode,
+          answers,
+          isAnonymous
+        }),
       });
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to submit review');
+      }
+      
+      const data = await response.json();
       
       // Redirect to thank you page
-      router.push(`/submit-review/thank-you?address=${encodeURIComponent(standardizedAddress)}`);
+      router.push(`/submit-review/thank-you?address=${encodeURIComponent(getStandardizedAddress())}`);
     } catch (err) {
+      console.error('Error submitting review:', err);
       setError('Error submitting review. Please try again later.');
       setIsSubmitting(false);
     }

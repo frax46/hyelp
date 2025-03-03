@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Button } from "./components/Button";
 import { Card, CardContent, CardTitle, CardDescription } from "./components/Card";
+import AddressSearch from "./components/AddressSearch";
 
 // Register ScrollTrigger plugin
 if (typeof window !== "undefined") {
@@ -23,7 +24,7 @@ export default function Home() {
   const heroRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
-  const searchFormRef = useRef<HTMLFormElement>(null);
+  const searchFormRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLElement>(null);
   const howItWorksRef = useRef<HTMLElement>(null);
@@ -78,13 +79,6 @@ export default function Home() {
     }
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
-
   const scrollToSection = (ref: React.RefObject<HTMLElement | null>) => {
     if (ref && ref.current) {
       ref.current.scrollIntoView({ behavior: 'smooth' });
@@ -106,24 +100,14 @@ export default function Home() {
               Discover your ideal place to live with honest reviews from real residents.
             </p>
             
-            {/* Search Bar */}
-            <form ref={searchFormRef} onSubmit={handleSearch} className="search-form">
-              <input
-                type="text"
+            {/* Search Bar with Autocomplete */}
+            <div ref={searchFormRef} className="search-form">
+              <AddressSearch 
                 placeholder="Enter an address"
-                className="search-input"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                aria-label="Address search"
+                buttonText="Search"
+                redirectToResults={true}
               />
-              <button 
-                type="submit" 
-                aria-label="Search for address" 
-                className="search-button"
-              >
-                Search
-              </button>
-            </form>
+            </div>
           </div>
           <div ref={imageContainerRef} className="hidden md:block">
             <div className="hero-image-container">
@@ -249,22 +233,13 @@ export default function Home() {
             Enter any address or neighborhood name to discover what locals love and what to watch out for.
           </p>
           
-          <form onSubmit={handleSearch} className="search-form max-w-2xl mx-auto">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter an address or neighborhood..."
-              className="search-input"
-              aria-label="Search for a neighborhood"
+          <div className="max-w-3xl mx-auto">
+            <AddressSearch 
+              placeholder="Search by address, city, or zip code..."
+              buttonText="Find Reviews"
+              redirectToResults={true}
             />
-            <button
-              type="submit"
-              className="search-button"
-            >
-              Search
-            </button>
-          </form>
+          </div>
         </div>
       </section>
 
@@ -387,6 +362,6 @@ export default function Home() {
       </section>
 
       <Footer />
-      </main>
+    </main>
   );
 }
