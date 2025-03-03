@@ -1,0 +1,10 @@
+---
+description: Enforce styling and UI rules using TailwindCSS and ShadCN.
+globs: **/*.tsx", "**/*.ts
+---
+
+"Use TailwindCSS utility classes for styling instead of custom CSS unless necessary.",
+"Group Tailwind classes logically (e.g., layout -> spacing -> typography -> colors).",
+"Use ShadCN components where applicable instead of building from scratch.",
+"Ensure consistent use of dark mode styles.",
+"Avoid inline styles; prefer Tailwind classes or component props."

@@ -1,0 +1,10 @@
+---
+description: Rules for animations using GSAP.
+globs: **/*.tsx", "**/*.ts
+---
+
+"Use GSAP animations sparingly—only for essential UI enhancements.",
+"Prefer minimal and subtle animations over excessive motion.",
+"Ensure animations do not impact performance (lazy-load GSAP).",
+"Use `useEffect` to initialize animations properly in client components.",
+"Avoid unnecessary re-renders when applying animations."

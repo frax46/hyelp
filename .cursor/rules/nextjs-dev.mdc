@@ -1,0 +1,10 @@
+---
+description: Rules for Next.js development.
+globs: **/*.tsx", "**/*.ts
+---
+
+"Use App Router with server components where applicable.",
+"Avoid excessive use of client components. Only use 'use client' when necessary.",
+"Prefer API routes for backend logic rather than client-side fetching.",
+"Use React Query or SWR for client-side data fetching instead of direct fetch calls.",
+"Ensure dynamic routes and metadata are properly defined."

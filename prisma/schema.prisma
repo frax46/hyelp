@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Address {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  streetAddress   String
+  city            String
+  state           String
+  zipCode         String
+  formattedAddress String   @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  reviews         Review[]
+}
+
+model Question {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  text        String
+  description String?
+  category    String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  answers     Answer[]
+  
+  @@index([category, isActive])
+}
+
+model Answer {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  score      Int      @default(0)
+  notes      String?
+  questionId String   @db.ObjectId
+  reviewId   String   @db.ObjectId
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  question   Question @relation(fields: [questionId], references: [id])
+  review     Review   @relation(fields: [reviewId], references: [id])
+}
+
+model Review {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  addressId   String   @db.ObjectId
+  userId      String?
+  userEmail   String?
+  isAnonymous Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  answers     Answer[]
+  address     Address  @relation(fields: [addressId], references: [id])
+  
+  @@index([addressId])
+  @@index([userId])
+}

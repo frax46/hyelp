@@ -1,0 +1,11 @@
+---
+description: Defines UI/UX design principles for a clean and modern web experience.
+globs: **/*.tsx", "**/*.ts
+---
+"Follow a **minimalist** approach—clean design with proper whitespace.",
+"Use **consistent typography**—ShadCN defaults or custom Tailwind typography.",
+"Ensure all UI elements are responsive and mobile-friendly.",
+"Use **soft shadows, rounded corners (2xl), and subtle gradients** for modern aesthetics.",
+"Keep animations smooth and avoid excessive motion.",
+"Ensure navigation is **intuitive** and call-to-actions are clearly visible.",
+"Adhere to contrast and accessibility standards."

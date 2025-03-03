@@ -1,101 +1,392 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import { Button } from "./components/Button";
+import { Card, CardContent, CardTitle, CardDescription } from "./components/Card";
+
+// Register ScrollTrigger plugin
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  // Refs for GSAP animations
+  const heroRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const searchFormRef = useRef<HTMLFormElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const featuresRef = useRef<HTMLElement>(null);
+  const howItWorksRef = useRef<HTMLElement>(null);
+  const searchRef = useRef<HTMLElement>(null);
+  
+  // GSAP animations
+  useEffect(() => {
+    // Hero section animations
+    const heroTl = gsap.timeline();
+    
+    heroTl.fromTo(
+      headingRef.current,
+      { y: 50, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
+    ).fromTo(
+      descriptionRef.current,
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+      "-=0.4"
+    ).fromTo(
+      searchFormRef.current,
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+      "-=0.3"
+    ).fromTo(
+      imageContainerRef.current,
+      { x: 50, opacity: 0 },
+      { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" },
+      "-=0.5"
+    );
+    
+    // Features section animations with ScrollTrigger
+    if (featuresRef.current && typeof window !== "undefined") {
+      const featureItems = featuresRef.current.querySelectorAll('.feature-card');
+      
+      gsap.fromTo(
+        featureItems,
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: featuresRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none"
+          }
+        }
+      );
+    }
+  }, []);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  const scrollToSection = (ref: React.RefObject<HTMLElement | null>) => {
+    if (ref && ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <main className="flex min-h-screen flex-col">
+      <Header />
+
+      {/* Hero Section */}
+      <section ref={heroRef} className="hero">
+        <div className="container hero-container">
+          <div className="hero-content">
+            <h1 ref={headingRef}>
+              Find your <span>perfect</span> neighborhood
+            </h1>
+            <p ref={descriptionRef}>
+              Discover your ideal place to live with honest reviews from real residents.
+            </p>
+            
+            {/* Search Bar */}
+            <form ref={searchFormRef} onSubmit={handleSearch} className="search-form">
+              <input
+                type="text"
+                placeholder="Enter an address"
+                className="search-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Address search"
+              />
+              <button 
+                type="submit" 
+                aria-label="Search for address" 
+                className="search-button"
+              >
+                Search
+              </button>
+            </form>
+          </div>
+          <div ref={imageContainerRef} className="hidden md:block">
+            <div className="hero-image-container">
+              <div className="hero-image">
+                <div className="hero-image-placeholder">
+                  <span>Peaceful Neighborhood View</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* Trusted By Section */}
+      <section className="section section-alt">
+        <div className="container">
+          <h2 className="text-center text-xl font-medium text-gray-800 uppercase tracking-wide mb-12">
+            Trusted by homebuyers across the country
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
+            <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
+              <span className="text-gray-400 font-medium">Partner 1</span>
+            </div>
+            <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
+              <span className="text-gray-400 font-medium">Partner 2</span>
+            </div>
+            <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
+              <span className="text-gray-400 font-medium">Partner 3</span>
+            </div>
+            <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
+              <span className="text-gray-400 font-medium">Partner 4</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section ref={featuresRef} className="section features">
+        <div className="container">
+          <h2 className="section-title">
+            Why Choose <span>Hyelp</span>
+          </h2>
+          
+          <div className="features-grid">
+            <div className="feature-card">
+              <div className="feature-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                </svg>
+              </div>
+              <h3 className="feature-title">Real Resident Reviews</h3>
+              <p className="feature-description">Get authentic insights from people who actually live in the neighborhood, not paid advertisers.</p>
+            </div>
+            
+            <div className="feature-card">
+              <div className="feature-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+              </div>
+              <h3 className="feature-title">Detailed Neighborhood Data</h3>
+              <p className="feature-description">Explore comprehensive information about safety, amenities, schools, and community vibe.</p>
+            </div>
+            
+            <div className="feature-card">
+              <div className="feature-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h3 className="feature-title">Verified Information</h3>
+              <p className="feature-description">We verify reviewers to ensure you're getting trustworthy information about potential neighborhoods.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it Works Section */}
+      <section ref={howItWorksRef} className="section section-alt">
+        <div className="container">
+          <h2 className="section-title">
+            How <span>Hyelp</span> Works
+          </h2>
+          
+          <div className="features-grid">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl font-bold">1</div>
+              <h3 className="feature-title">Search a Neighborhood</h3>
+              <p className="feature-description">Enter an address or neighborhood name to find detailed information and reviews.</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl font-bold">2</div>
+              <h3 className="feature-title">Explore Reviews & Data</h3>
+              <p className="feature-description">Read authentic reviews from residents and explore comprehensive neighborhood data.</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl font-bold">3</div>
+              <h3 className="feature-title">Share Your Experience</h3>
+              <p className="feature-description">Contribute to the community by sharing your own neighborhood experiences.</p>
+            </div>
+          </div>
+          
+          <div className="mt-16 text-center">
+            <button 
+              onClick={() => scrollToSection(searchRef)}
+              className="search-button px-8 py-3"
+            >
+              Start Exploring
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Search Section */}
+      <section ref={searchRef} className="section">
+        <div className="container text-center">
+          <h2 className="section-title">
+            Find Your Perfect <span>Neighborhood</span>
+          </h2>
+          <p className="text-gray-700 mb-10 max-w-2xl mx-auto">
+            Enter any address or neighborhood name to discover what locals love and what to watch out for.
+          </p>
+          
+          <form onSubmit={handleSearch} className="search-form max-w-2xl mx-auto">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Enter an address or neighborhood..."
+              className="search-input"
+              aria-label="Search for a neighborhood"
+            />
+            <button
+              type="submit"
+              className="search-button"
+            >
+              Search
+            </button>
+          </form>
+        </div>
+      </section>
+
+      {/* Featured Neighborhoods */}
+      <section className="section section-alt">
+        <div className="container">
+          <h2 className="section-title">
+            Featured <span>Neighborhoods</span>
+          </h2>
+          
+          <div className="features-grid">
+            {[
+              {
+                name: "Downtown",
+                rating: 4.8,
+                reviews: 124,
+                description: "Urban living with great restaurants and nightlife"
+              },
+              {
+                name: "Riverside",
+                rating: 4.6,
+                reviews: 98,
+                description: "Peaceful area with beautiful water views"
+              },
+              {
+                name: "Oakwood",
+                rating: 4.7,
+                reviews: 112,
+                description: "Family-friendly with excellent schools"
+              }
+            ].map((neighborhood, index) => (
+              <div key={index} className="feature-card">
+                <div className="h-40 bg-green-50 mb-4 rounded flex items-center justify-center">
+                  <span className="text-green-700">{neighborhood.name} View</span>
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="feature-title">{neighborhood.name}</h3>
+                    <div className="flex items-center">
+                      <span className="text-green-700 font-medium mr-1">{neighborhood.rating}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-700" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className="feature-description mb-4">{neighborhood.description}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-500 text-sm">{neighborhood.reviews} reviews</span>
+                    <button className="px-4 py-2 bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors duration-300">
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="section">
+        <div className="container">
+          <h2 className="section-title">
+            What Our <span>Users Say</span>
+          </h2>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              {
+                quote: "Hyelp helped me find the perfect neighborhood for my family. The reviews were honest and gave me a real sense of the community before we moved.",
+                author: "Sarah Johnson",
+                role: "New Homeowner"
+              },
+              {
+                quote: "As someone who travels frequently for work, I use Hyelp to research neighborhoods in new cities. It's been an invaluable resource for finding safe and convenient areas.",
+                author: "Michael Chen",
+                role: "Business Traveler"
+              }
+            ].map((testimonial, index) => (
+              <div key={index} className="feature-card">
+                <div className="flex flex-col h-full">
+                  <svg className="h-8 w-8 text-green-500 mb-6" fill="currentColor" viewBox="0 0 32 32" aria-hidden="true">
+                    <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
+                  </svg>
+                  <p className="text-gray-800 mb-6 flex-grow">{testimonial.quote}</p>
+                  <div className="flex items-center">
+                    <div className="h-12 w-12 rounded-full bg-green-100 overflow-hidden relative flex items-center justify-center">
+                      <span className="text-green-700 font-bold">{testimonial.author.charAt(0)}</span>
+                    </div>
+                    <div className="ml-4">
+                      <h4 className="font-semibold text-gray-900">{testimonial.author}</h4>
+                      <p className="text-gray-600 text-sm">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="section bg-green-700 text-white">
+        <div className="container text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Find Your Perfect Neighborhood?
+          </h2>
+          <p className="text-white/90 mb-10 max-w-2xl mx-auto">
+            Join thousands of users who have found their ideal community using Hyelp's neighborhood insights.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="search-button bg-white text-green-700 hover:bg-gray-100">
+              Sign Up Free
+            </button>
+            <button className="px-8 py-3 bg-transparent border border-white text-white font-medium rounded hover:bg-white/10 transition-all duration-300">
+              Learn More
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
   );
 }
