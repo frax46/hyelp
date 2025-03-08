@@ -23,45 +23,34 @@ COPY . .
 # Generate Prisma client
 RUN npx prisma generate
 
-# Completely disable all ESLint and TypeScript checks during build
+# Disable ESLint checks during build
 ENV NEXT_DISABLE_ESLINT=1
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
-ENV NEXT_SKIP_TS_CHECK=1
 
-# Add explicit build flags to disable checks
-RUN npm run build -- --no-lint --no-typescript
+# Next.js builds with output in the .next directory
+RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED=1
 
-# Add a non-root user
+# Create a non-root user to run the app
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy necessary files from builder
+# Set the correct permission for .next directory and cache
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.js ./next.config.js
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 
-# Set proper permissions
-RUN chown -R nextjs:nodejs /app
-
-# Use the non-root user
 USER nextjs
 
-# Expose the port
 EXPOSE 3000
 
-# Set host and port
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Command to run the application
+# Start the Next.js application
 CMD ["node", "server.js"]

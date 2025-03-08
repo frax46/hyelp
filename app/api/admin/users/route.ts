@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth, clerkClient } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
+import { clerkClient } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { isAdminEmail } from "@/app/utils/adminAccess";
 
 // Helper function to check admin access
 async function checkAdminAccess() {
-  const { userId } = auth();
+  const session = await auth();
+  const userId = session.userId;
   
   if (!userId) {
     return { isAuthorized: false, error: "Unauthorized: Not authenticated" };
