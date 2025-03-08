@@ -449,7 +449,7 @@ export default function ReviewForm({ initialAddress }: ReviewFormProps) {
   const RatingStars = ({ questionId, value }: { questionId: string; value: number }) => {
     return (
       <div className="flex items-center" role="group" aria-label={`Rating for ${questionId}`}>
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+        {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
             type="button"
@@ -459,7 +459,7 @@ export default function ReviewForm({ initialAddress }: ReviewFormProps) {
                 ? "text-yellow-400" 
                 : "text-gray-300"
             }`}
-            aria-label={`Rate ${star} out of 10`}
+            aria-label={`Rate ${star} out of 5`}
             aria-pressed={star === value}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -738,7 +738,7 @@ export default function ReviewForm({ initialAddress }: ReviewFormProps) {
                 <div key={question.id} className="flex items-center justify-between">
                   <span className="text-gray-700">{question.text}</span>
                   <div className="flex items-center">
-                    <span className="font-semibold text-gray-800 mr-2">{formData.answers[question.id]?.score || 0}/10</span>
+                    <span className="font-semibold text-gray-800 mr-2">{formData.answers[question.id]?.score || 0}/5</span>
                     {/* Show stars for visual representation */}
                     <div className="flex">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -746,7 +746,7 @@ export default function ReviewForm({ initialAddress }: ReviewFormProps) {
                           key={star}
                           xmlns="http://www.w3.org/2000/svg"
                           className={`h-5 w-5 ${
-                            star <= Math.ceil((formData.answers[question.id]?.score || 0) / 2) 
+                            star <= (formData.answers[question.id]?.score || 0)
                               ? "text-yellow-400" 
                               : "text-gray-300"
                           }`}
