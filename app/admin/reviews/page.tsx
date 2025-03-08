@@ -17,7 +17,8 @@ import {
   CardContent, 
   CardDescription, 
   CardHeader, 
-  CardTitle 
+  CardTitle,
+  CardFooter
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,6 +64,13 @@ type Review = {
       category: string;
     };
   }>;
+  averageScore?: number;
+};
+
+type PaginationData = {
+  total: number;
+  limit: number;
+  offset: number;
 };
 
 export default function AdminReviewsPage() {
@@ -74,10 +82,16 @@ export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [filteredReviews, setFilteredReviews] = useState<Review[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterCity, setFilterCity] = useState("");
+  const [filterCity, setFilterCity] = useState("all");
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [error, setError] = useState("");
+  
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pagination, setPagination] = useState<PaginationData>({ total: 0, limit: 10, offset: 0 });
   
   // Get unique cities for filtering
   const cities = [...new Set(reviews.map(review => review.address.city))].sort();
@@ -88,7 +102,7 @@ export default function AdminReviewsPage() {
     
     const checkAdmin = async () => {
       try {
-        const response = await fetch("/api/admin/user");
+        const response = await fetch("/api/user");
         const data = await response.json();
         
         if (!isAdminEmail(data.email)) {
@@ -96,7 +110,7 @@ export default function AdminReviewsPage() {
           router.push("/");
         } else {
           // Fetch reviews if admin
-          fetchReviews();
+          fetchReviews(1);
         }
       } catch (error) {
         console.error("Error checking admin status:", error);
@@ -107,19 +121,34 @@ export default function AdminReviewsPage() {
     checkAdmin();
   }, [userId, router]);
   
-  // Fetch all reviews
-  const fetchReviews = async () => {
+  // Fetch reviews with pagination
+  const fetchReviews = async (pageNumber = page) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/admin/reviews");
+      const offset = (pageNumber - 1) * limit;
+      // Add filter params if they exist
+      let url = `/api/admin/reviews?limit=${limit}&offset=${offset}`;
+      
+      if (filterCity && filterCity !== 'all') {
+        // This assumes the API supports filtering by city (you might need to implement this)
+        url += `&city=${encodeURIComponent(filterCity)}`;
+      }
+      
+      const response = await fetch(url);
       
       if (!response.ok) {
         throw new Error("Failed to fetch reviews");
       }
       
       const data = await response.json();
-      setReviews(data);
-      setFilteredReviews(data);
+      setReviews(data.reviews);
+      setPagination(data.pagination);
+      setTotal(data.pagination.total);
+      setPage(pageNumber);
+      
+      // Apply client-side filtering for search
+      applySearchFilter(data.reviews);
+      
       setError("");
     } catch (error) {
       console.error("Error fetching reviews:", error);
@@ -129,31 +158,45 @@ export default function AdminReviewsPage() {
     }
   };
   
-  // Apply filters when search term or city filter changes
-  useEffect(() => {
-    let filtered = reviews;
-    
-    // Apply search filter
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(review => 
-        review.address.streetAddress.toLowerCase().includes(term) ||
-        review.address.city.toLowerCase().includes(term) ||
-        review.address.state.toLowerCase().includes(term) ||
-        review.address.zipCode.includes(term) ||
-        (review.userEmail && review.userEmail.toLowerCase().includes(term))
-      );
+  // Apply search filter
+  const applySearchFilter = (reviewsToFilter: Review[]) => {
+    if (!searchTerm) {
+      setFilteredReviews(reviewsToFilter);
+      return;
     }
     
-    // Apply city filter
-    if (filterCity) {
-      filtered = filtered.filter(review => 
-        review.address.city === filterCity
-      );
-    }
+    const term = searchTerm.toLowerCase();
+    const filtered = reviewsToFilter.filter(review => 
+      review.address.streetAddress.toLowerCase().includes(term) ||
+      review.address.city.toLowerCase().includes(term) ||
+      review.address.state.toLowerCase().includes(term) ||
+      review.address.zipCode.includes(term) ||
+      (review.userEmail && review.userEmail.toLowerCase().includes(term))
+    );
     
     setFilteredReviews(filtered);
-  }, [searchTerm, filterCity, reviews]);
+  };
+  
+  // Handle search changes
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    applySearchFilter(reviews);
+  };
+  
+  // Handle city filter changes
+  const handleCityChange = (value: string) => {
+    setFilterCity(value);
+    setPage(1); // Reset to first page when changing filters
+    fetchReviews(1); // Refetch with new filter
+  };
+  
+  // Handle filter reset
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setFilterCity("all");
+    setPage(1);
+    fetchReviews(1);
+  };
   
   // View review details
   const handleViewReview = (review: Review) => {
@@ -163,29 +206,34 @@ export default function AdminReviewsPage() {
   
   // Format date for display
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
-    });
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
   };
   
   // Calculate average rating for a review
   const calculateAverageRating = (review: Review) => {
-    if (!review.answers.length) return 0;
+    if (review.averageScore !== undefined) {
+      return review.averageScore.toFixed(1);
+    }
     
-    const sum = review.answers.reduce((total, answer) => total + answer.score, 0);
-    return (sum / review.answers.length).toFixed(1);
+    const validAnswers = review.answers.filter(answer => answer.score > 0);
+    if (validAnswers.length === 0) return "N/A";
+    
+    const total = validAnswers.reduce((sum, answer) => sum + answer.score, 0);
+    return (total / validAnswers.length).toFixed(1);
   };
   
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-10">
-        <h1 className="text-2xl font-bold mb-6">Review Management</h1>
-        <p>Loading reviews...</p>
-      </div>
-    );
-  }
+  // Handle pagination
+  const goToPage = (newPage: number) => {
+    if (newPage < 1 || newPage > Math.ceil(total / limit)) return;
+    fetchReviews(newPage);
+  };
   
   return (
     <div className="container mx-auto py-10">
@@ -210,20 +258,20 @@ export default function AdminReviewsPage() {
                 id="search"
                 placeholder="Search address or email..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchChange}
               />
             </div>
             <div className="w-full md:w-1/3">
               <Label htmlFor="city">Filter by City</Label>
               <Select
                 value={filterCity}
-                onValueChange={setFilterCity}
+                onValueChange={handleCityChange}
               >
                 <SelectTrigger id="city">
                   <SelectValue placeholder="All Cities" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Cities</SelectItem>
+                  <SelectItem value="all">All Cities</SelectItem>
                   {cities.map(city => (
                     <SelectItem key={city} value={city}>{city}</SelectItem>
                   ))}
@@ -233,12 +281,9 @@ export default function AdminReviewsPage() {
             <div className="flex items-end">
               <Button
                 variant="outline"
-                onClick={() => {
-                  setSearchTerm("");
-                  setFilterCity("");
-                }}
+                onClick={handleResetFilters}
               >
-                Clear Filters
+                Reset Filters
               </Button>
             </div>
           </div>
@@ -247,10 +292,7 @@ export default function AdminReviewsPage() {
       
       <Card>
         <CardHeader>
-          <CardTitle>Reviews ({filteredReviews.length})</CardTitle>
-          <CardDescription>
-            Showing {filteredReviews.length} of {reviews.length} total reviews
-          </CardDescription>
+          <CardTitle>Reviews ({total})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -259,16 +301,22 @@ export default function AdminReviewsPage() {
                 <TableHead>Date</TableHead>
                 <TableHead>Address</TableHead>
                 <TableHead>City</TableHead>
-                <TableHead>Submitted By</TableHead>
-                <TableHead>Rating</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead>Reviewer</TableHead>
+                <TableHead>Avg. Rating</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredReviews.length === 0 ? (
+              {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-6">
-                    No reviews found
+                  <TableCell colSpan={6} className="text-center py-10">
+                    Loading reviews...
+                  </TableCell>
+                </TableRow>
+              ) : filteredReviews.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-10">
+                    No reviews found matching your criteria.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -306,6 +354,68 @@ export default function AdminReviewsPage() {
             </TableBody>
           </Table>
         </CardContent>
+        <CardFooter>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => goToPage(page - 1)}
+                disabled={page <= 1 || isLoading}
+              >
+                Previous
+              </Button>
+              <div className="flex items-center space-x-1">
+                {/* Show page numbers */}
+                {Array.from({ length: Math.min(5, Math.ceil(total / limit)) }, (_, i) => {
+                  // Calculate which pages to show
+                  let pageNum: number;
+                  const totalPages = Math.ceil(total / limit);
+                  
+                  if (totalPages <= 5) {
+                    // If 5 or fewer pages, show all pages 1 through totalPages
+                    pageNum = i + 1;
+                  } else if (page <= 3) {
+                    // If near the start, show pages 1-5
+                    pageNum = i + 1;
+                  } else if (page >= totalPages - 2) {
+                    // If near the end, show the last 5 pages
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    // Otherwise show 2 before, current, and 2 after
+                    pageNum = page - 2 + i;
+                  }
+                  
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={page === pageNum ? "default" : "outline"}
+                      size="sm"
+                      className="w-8 h-8 p-0"
+                      onClick={() => goToPage(pageNum)}
+                      disabled={isLoading}
+                    >
+                      {pageNum}
+                    </Button>
+                  );
+                })}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => goToPage(page + 1)}
+                disabled={page >= Math.ceil(total / limit) || isLoading}
+              >
+                Next
+              </Button>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">
+                Page {page} of {Math.ceil(total / limit) || 1} · Showing {filteredReviews.length} of {total} reviews
+              </p>
+            </div>
+          </div>
+        </CardFooter>
       </Card>
       
       {/* Review Details Dialog */}
