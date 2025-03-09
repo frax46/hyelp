@@ -3,10 +3,10 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest, 
-  { params }: { params: { addressId: string } }
+  context: { params: { addressId: string } }
 ) {
   try {
-    const addressId = await params.addressId;
+    const addressId = context.params.addressId;
     
     if (!addressId) {
       return NextResponse.json({ error: "Address ID is required" }, { status: 400 });
