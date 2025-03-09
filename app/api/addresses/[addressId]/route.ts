@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: { addressId: string } }
 ) {
   try {
-    const addressId = params.addressId;
+    const addressId = await params.addressId;
     
     if (!addressId) {
       return NextResponse.json({ error: "Address ID is required" }, { status: 400 });
