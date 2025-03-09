@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(
-  request: NextRequest, 
-  context: { params: { addressId: string } }
-) {
+type RouteParams = {
+  params: {
+    addressId: string;
+  }
+};
+
+export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const addressId = context.params.addressId;
+    const { addressId } = params;
     
     if (!addressId) {
       return NextResponse.json({ error: "Address ID is required" }, { status: 400 });
