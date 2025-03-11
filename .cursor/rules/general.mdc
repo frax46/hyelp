@@ -1,9 +1,0 @@
----
-description: Defines general coding style for this project.
-globs: 
----
-"Always use TypeScript (no JavaScript).",
-"Follow clean code principles: meaningful variable names, modular functions, and consistent formatting.",
-"Prefer functional components over class components.",
-"Use async/await instead of Promises.",
-"Ensure accessibility (a11y) best practices in all UI components."

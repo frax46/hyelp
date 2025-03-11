@@ -1,0 +1,18 @@
+---
+description: Ensure major functionalities are tested after code changes
+globs: **/*.tsx", "**/*.ts
+alwaysApply: true
+---
+**Glob**: *
+
+
+# Testing Major Functionalities
+
+After generating or modifying code in response to a prompt:
+
+- Suggest writing unit tests for new functions or methods using the project's testing framework (e.g., Jest).
+- Recommend updating existing tests if the changes affect them.
+- For critical paths, suggest writing integration tests.
+- Remind the user to run the test suite (e.g., `npm test`) to verify the changes.
+
+If applicable, refer to existing tests in @file tests/ and follow the guidelines in @file TESTING.md.

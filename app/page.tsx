@@ -16,9 +16,75 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Review interfaces
+interface ReviewQuestion {
+  id: string;
+  text: string;
+  category: string;
+}
+
+interface ReviewAnswer {
+  id: string;
+  score: number;
+  notes: string | null;
+  question: ReviewQuestion;
+}
+
+interface ReviewAddress {
+  id: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
+
+interface Review {
+  id: string;
+  createdAt: string;
+  userId: string | null;
+  userEmail: string | null;
+  isAnonymous: boolean;
+  addressId: string;
+  address: ReviewAddress;
+  answers: ReviewAnswer[];
+  averageScore: number;
+}
+
 export default function Home() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [recentReviews, setRecentReviews] = useState<Review[]>([]);
+  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
+  
+  // Fetch recent reviews
+  useEffect(() => {
+    const fetchRecentReviews = async () => {
+      try {
+        const response = await fetch('/api/reviews/recent?limit=3');
+        if (!response.ok) {
+          throw new Error('Failed to fetch recent reviews');
+        }
+        const data = await response.json();
+        setRecentReviews(data);
+      } catch (error) {
+        console.error('Error fetching recent reviews:', error);
+      } finally {
+        setIsLoadingReviews(false);
+      }
+    };
+    
+    fetchRecentReviews();
+  }, []);
+  
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }).format(date);
+  };
   
   // Refs for GSAP animations
   const heroRef = useRef<HTMLElement>(null);
@@ -89,34 +155,23 @@ export default function Home() {
     <main className="flex min-h-screen flex-col">
       <Header />
 
-      {/* Hero Section */}
-      <section ref={heroRef} className="hero">
-        <div className="container hero-container">
-          <div className="hero-content">
-            <h1 ref={headingRef}>
-              Find your <span>perfect</span> neighborhood
-            </h1>
-            <p ref={descriptionRef}>
-              Discover your ideal place to live with honest reviews from real residents.
-            </p>
-            
-            {/* Search Bar with Autocomplete */}
-            <div ref={searchFormRef} className="search-form">
-              <AddressSearch 
-                placeholder="Enter an address"
-                buttonText="Search"
-                redirectToResults={true}
-              />
-            </div>
-          </div>
-          <div ref={imageContainerRef} className="hidden md:block">
-            <div className="hero-image-container">
-              <div className="hero-image">
-                <div className="hero-image-placeholder">
-                  <span>Peaceful Neighborhood View</span>
-                </div>
-              </div>
-            </div>
+      {/* Hero Section with Glass Morphism */}
+      <section ref={heroRef} className="hero-section">
+        <div className="glass-container">
+          <h1 ref={headingRef}>
+            Find your <span className="highlight">perfect</span> neighborhood
+          </h1>
+          <p ref={descriptionRef}>
+            Discover your ideal place to live with honest reviews from real residents.
+          </p>
+          
+          {/* Search Bar with Autocomplete */}
+          <div ref={searchFormRef} className="search-container">
+            <AddressSearch 
+              placeholder="Enter an address"
+              buttonText="Search"
+              redirectToResults={true}
+            />
           </div>
         </div>
       </section>
@@ -247,54 +302,58 @@ export default function Home() {
       <section className="section section-alt">
         <div className="container">
           <h2 className="section-title">
-            Featured <span>Neighborhoods</span>
+            Recent <span>Reviews</span>
           </h2>
           
           <div className="features-grid">
-            {[
-              {
-                name: "Downtown",
-                rating: 4.8,
-                reviews: 124,
-                description: "Urban living with great restaurants and nightlife"
-              },
-              {
-                name: "Riverside",
-                rating: 4.6,
-                reviews: 98,
-                description: "Peaceful area with beautiful water views"
-              },
-              {
-                name: "Oakwood",
-                rating: 4.7,
-                reviews: 112,
-                description: "Family-friendly with excellent schools"
-              }
-            ].map((neighborhood, index) => (
-              <div key={index} className="feature-card">
-                <div className="h-40 bg-green-50 mb-4 rounded flex items-center justify-center">
-                  <span className="text-green-700">{neighborhood.name} View</span>
-                </div>
-                <div>
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="feature-title">{neighborhood.name}</h3>
-                    <div className="flex items-center">
-                      <span className="text-green-700 font-medium mr-1">{neighborhood.rating}</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-700" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
+            {isLoadingReviews ? (
+              <div className="col-span-3 flex justify-center items-center py-10">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-green-500"></div>
+              </div>
+            ) : recentReviews.length === 0 ? (
+              <div className="col-span-3 text-center py-10">
+                <p>No reviews available yet.</p>
+              </div>
+            ) : (
+              recentReviews.map((review, index) => (
+                <div key={review.id} className="feature-card">
+                  <div className="h-40 bg-green-50 mb-4 rounded flex items-center justify-center">
+                    <span className="text-green-700">{review.address.city} Review</span>
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="feature-title">{review.address.streetAddress}</h3>
+                      <div className="flex items-center">
+                        <span className="text-green-700 font-medium mr-1">{review.averageScore.toFixed(1)}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-700" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <p className="feature-description mb-4">
+                      {review.address.city}, {review.address.state} - {formatDate(review.createdAt)}
+                    </p>
+                    {review.answers.length > 0 && (
+                      <div className="mb-4 p-3 bg-gray-50 rounded italic text-sm text-gray-600">
+                        {review.answers.find((a: ReviewAnswer) => a.notes)?.notes || 
+                         `Rating: ${review.averageScore.toFixed(1)} out of 5`}
+                      </div>
+                    )}
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-500 text-sm">
+                        {review.isAnonymous ? "Anonymous" : (review.userEmail || "Unknown")}
+                      </span>
+                      <button 
+                        className="px-4 py-2 bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors duration-300"
+                        onClick={() => router.push(`/address/${review.addressId}`)}
+                      >
+                        View Details
+                      </button>
                     </div>
                   </div>
-                  <p className="feature-description mb-4">{neighborhood.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-500 text-sm">{neighborhood.reviews} reviews</span>
-                    <button className="px-4 py-2 bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors duration-300">
-                      View Details
-                    </button>
-                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>

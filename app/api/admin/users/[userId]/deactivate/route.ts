@@ -5,7 +5,7 @@ import { isAdminEmail } from "@/app/utils/adminAccess";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     // Check if user is authenticated and is an admin
@@ -29,7 +29,7 @@ export async function PUT(
       );
     }
     
-    const targetUserId = params.userId;
+    const { userId } = await params;
     
     // In a real application, you would use the Clerk Admin API to deactivate a user
     // Since our Prisma schema doesn't have a User model, we'll track user status in a different way
@@ -41,7 +41,7 @@ export async function PUT(
     return NextResponse.json({
       success: true,
       message: "User deactivated successfully (demonstration only)",
-      userId: targetUserId
+      userId: userId
     });
   } catch (error) {
     console.error("Error deactivating user:", error);

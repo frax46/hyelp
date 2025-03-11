@@ -1,0 +1,62 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ ---
+description: Guidelines for Test-Driven Development (TDD) approach
+globs: **/*.test.ts, **/*.test.tsx, **/*.spec.ts, **/*.spec.tsx, **/tests/**/*
+alwaysApply: true
+---
+
+# Test-Driven Development (TDD) Guidelines
+
+When implementing TDD practices:
+
+## Core TDD Cycle
+- **Red**: Write a failing test that defines the expected behavior.
+- **Green**: Implement minimal code to make the test pass.
+- **Refactor**: Improve code while keeping tests passing.
+
+## Test Structure
+- **Arrange-Act-Assert**: Structure tests with clear setup, execution, and verification phases.
+- **FIRST Principles**:
+  - **Fast**: Tests should run quickly.
+  - **Isolated**: Tests should not depend on each other.
+  - **Repeatable**: Tests should be deterministic.
+  - **Self-validating**: Tests should have clear pass/fail output.
+  - **Timely**: Write tests before or alongside production code.
+
+## Testing Framework (Jest)
+- **Test Organization**: Group related tests with `describe` blocks.
+- **Test Cases**: Write specific test cases with `it` or `test`.
+- **Setup/Teardown**: Use `beforeEach`, `afterEach`, `beforeAll`, `afterAll` appropriately.
+- **Assertions**: Use Jest's built-in assertions with descriptive error messages.
+
+## Component Testing
+- **Rendering Tests**: Test component rendering with `@testing-library/react`.
+- **User Interactions**: Simulate user events with `@testing-library/user-event`.
+- **Accessibility**: Include tests for accessibility attributes and behaviors.
+- **Snapshots**: Use snapshot testing judiciously for UI verification.
+
+## API/Integration Testing
+- **Request Testing**: Test API endpoints with simulated requests.
+- **Mocking**: Mock external dependencies with Jest mock functions.
+- **Database**: Use test databases or in-memory alternatives.
+
+## Mocking
+- **Jest Mocks**: Use `jest.mock()` for module mocking.
+- **Spy Functions**: Track function calls with `jest.spyOn()`.
+- **Mock Implementation**: Provide custom implementations with `mockImplementation()`.
+- **Mock Return Values**: Set return values with `mockReturnValue()` or `mockResolvedValue()`.
+
+## Test Coverage
+- **Coverage Goals**: Aim for high, meaningful coverage (>80%).
+- **Coverage Reports**: Generate and review coverage reports regularly.
+- **Critical Paths**: Ensure 100% coverage for critical business logic.
+
+## Continuous Integration
+- **Automated Testing**: Run tests automatically in CI/CD pipeline.
+- **Pre-commit Hooks**: Configure hooks to run tests before commits.
+
+Follow these principles to ensure robust, maintainable code through test-driven development.

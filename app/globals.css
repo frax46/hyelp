@@ -189,18 +189,15 @@
 
 .hero-image-container {
   @apply relative;
-}
-
-.hero-image {
-  @apply rounded-lg overflow-hidden shadow-lg bg-white border border-gray-200;
-}
-
-.hero-image-placeholder {
-  @apply w-full h-[400px] bg-green-50 flex items-center justify-center;
-}
-
-.hero-image-placeholder span {
-  @apply text-green-700 font-medium;
+  & img {
+    
+    top: 0;
+    left: 0;
+    width: 100vw ;
+    height:100vh;
+    object-fit: cover;
+    object-position: center;
+  }
 }
 
 /* Search form */
@@ -336,4 +333,64 @@
   .hero-content h1 {
     font-size: 2.5rem;
   }
+}
+
+/* Hero Section with Glass Morphism */
+.hero-section {
+  @apply relative flex flex-col items-start justify-center px-6 py-20 md:py-32 md:px-12;
+  min-height: 80vh;
+  background-color: #f3f4f6; /* Fallback color */
+  background-image: url('/images/green-house.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* Add overlay to ensure text readability */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2); /* Slight dark overlay */
+  z-index: 1;
+}
+
+.glass-container {
+  @apply rounded-xl p-8 md:p-12 w-full max-w-3xl mx-auto md:mx-0;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2; /* Ensure this is above the overlay */
+}
+
+.glass-container h1 {
+  @apply text-4xl md:text-6xl font-bold mb-4 text-gray-900;
+}
+
+.glass-container h1 .highlight {
+  @apply text-green-600;
+}
+
+.glass-container p {
+  @apply text-xl text-gray-800 mb-8;
+}
+
+.search-container {
+  @apply flex flex-col md:flex-row gap-4 w-full;
+}
+
+.search-container input {
+  @apply flex-1 px-4 py-3 rounded-lg text-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.search-container button {
+  @apply px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-lg flex items-center justify-center transition-colors;
 }

@@ -5,7 +5,7 @@ import { isAdminEmail } from "@/app/utils/adminAccess";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     // Check if user is authenticated and is an admin
@@ -29,7 +29,7 @@ export async function PUT(
       );
     }
     
-    const targetUserId = params.userId;
+    const { userId } = await params;
     
     // In a real implementation, you would use the Clerk SDK to get the user
     // and update your local database to track admin privileges
@@ -41,7 +41,7 @@ export async function PUT(
     return NextResponse.json({
       success: true,
       message: "User granted admin privileges (demonstration only)",
-      userId: targetUserId
+      userId: userId
     });
   } catch (error) {
     console.error("Error making user admin:", error);

@@ -1,0 +1,65 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ ---
+description: Guidelines for CI/CD pipelines and practices
+globs: .github/workflows/*.yml, .gitlab-ci.yml, Jenkinsfile, azure-pipelines.yml, **/ci/**/*
+alwaysApply: true
+---
+
+# CI/CD Guidelines
+
+When implementing continuous integration and continuous deployment:
+
+## Pipeline Structure
+- **Multi-Stage Pipelines**: Implement distinct stages (build, test, deploy).
+- **Clear Naming**: Use descriptive names for workflows, jobs, and steps.
+- **Fail Fast**: Configure early validation checks to fail quickly.
+- **Parallelization**: Run independent jobs concurrently to reduce pipeline duration.
+- **Dependencies**: Clearly define job dependencies with proper conditions.
+
+## Version Control Integration
+- **Branch Protection**: Enforce branch protection rules for main/production branches.
+- **Pull Request Validation**: Require passing CI checks before merging PRs.
+- **Commit Triggers**: Configure specific commit patterns or paths for targeted workflows.
+- **Branch Strategies**: Use feature branches, release branches, and environment-specific branches.
+
+## Testing in CI
+- **Automated Testing**: Run unit, integration, and E2E tests automatically.
+- **Test Artifacts**: Store test reports and logs for troubleshooting.
+- **Parallel Testing**: Split test suites for faster execution.
+- **Test Matrix**: Test across multiple platforms, browsers, or Node versions.
+- **Flaky Tests**: Implement retry strategies for occasionally failing tests.
+
+## Deployment Automation
+- **Infrastructure as Code**: Use IaC tools (Terraform, AWS CDK) for environment provisioning.
+- **Environment Promotion**: Implement progressive deployment through dev, staging, production.
+- **Deployment Approval**: Require manual approval for production deployments.
+- **Rollback Strategy**: Ensure automated rollback capabilities if deployments fail.
+
+## Security & Compliance
+- **Secret Management**: Never hardcode secrets; use environment variables or secret managers.
+- **SAST**: Integrate Static Application Security Testing tools (ESLint security plugins, SonarQube).
+- **Dependency Scanning**: Check for vulnerabilities in dependencies (npm audit, Snyk).
+- **License Compliance**: Verify license compatibility of dependencies.
+
+## Containerization
+- **Build Once**: Build container images once and promote across environments.
+- **Image Tagging**: Use semantic versioning or commit hashes for image tags.
+- **Image Scanning**: Scan container images for vulnerabilities.
+- **Registry Security**: Use private registries with authentication.
+
+## Monitoring & Metrics
+- **Pipeline Metrics**: Track pipeline duration, success rates, and frequency.
+- **Deployment Metrics**: Monitor deployment frequency and lead time.
+- **Notifications**: Configure alerts for pipeline failures.
+- **Scheduled Health Checks**: Implement post-deployment health validation.
+
+## Documentation
+- **Pipeline Documentation**: Maintain clear documentation of CI/CD workflows.
+- **Change Logs**: Generate automated change logs from commits.
+- **Release Notes**: Create structured release notes for each deployment.
+
+Follow these principles to ensure reliable, efficient, and secure CI/CD pipelines.

@@ -1,0 +1,65 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ ---
+description: Guidelines for Next.js 15 application development
+globs: **/*.ts, **/*.tsx, **/app/**/*
+alwaysApply: true
+---
+
+# Next.js 15 Guidelines
+
+When building with Next.js 15:
+
+- Never run `npm run dev`
+
+## App Router
+- **File-Based Routing**: Utilize the App Router structure with `/app` directory.
+- **Page Organization**:
+  - Use folders for routes and `page.tsx` for rendering routes.
+  - Implement layouts with `layout.tsx` for shared UI.
+  - Use `loading.tsx` for loading states and `error.tsx` for error boundaries.
+  - Place route handlers in `route.ts` files.
+- **Metadata**: Define metadata in each page or layout component for SEO.
+
+## Server Components
+- **Default to Server Components**: Use Server Components by default (no "use client" directive).
+- **Client Components**: Add "use client" directive only when needed for:
+  - Interactivity and event listeners
+  - Browser-only APIs
+  - React hooks (useState, useEffect, etc.)
+- **Component Boundaries**: Clearly separate server and client components.
+
+## Data Fetching
+- **Server-Side Fetching**: Prefer async/await directly in Server Components.
+- **React Server Actions**: Use for form submissions and data mutations.
+- **Streaming**: Implement streaming with Suspense boundaries for improved UX.
+- **Caching & Revalidation**:
+  - Utilize `fetch` with proper cache configurations.
+  - Use revalidation options (`revalidatePath`, `revalidateTag`) appropriately.
+
+## Rendering Strategies
+- **Static & Dynamic Rendering**: Choose appropriate rendering based on needs.
+- **Partial Prerendering**: Implement for pages with both static and dynamic content.
+
+## State Management
+- **Server State**: Keep state on the server when possible.
+- **Client State**: Use React Context or third-party libraries sparingly.
+
+## Performance
+- **Code Splitting**: Utilize Next.js automatic code splitting.
+- **Image Optimization**: Use `next/image` with proper sizing and formats.
+- **Font Optimization**: Implement with `next/font`.
+- **Bundle Analysis**: Regularly check bundle size with built-in analyzer.
+
+## TypeScript
+- **Strong Typing**: Use TypeScript for all components and functions.
+- **Path Aliases**: Configure path aliases in tsconfig for cleaner imports.
+
+## Deployment
+- **Edge Runtime**: Consider using the Edge runtime for global, low-latency operations.
+- **Environment Variables**: Properly manage with `.env.local` and public/private prefixes.
+
+Always implement these patterns to ensure modern, performant Next.js 15 applications.

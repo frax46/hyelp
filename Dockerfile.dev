@@ -1,0 +1,21 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy the rest of the code
+COPY . .
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Expose the port
+EXPOSE 3000
+
+# Run in development mode to avoid static generation errors
+CMD ["npm", "run", "dev"] 

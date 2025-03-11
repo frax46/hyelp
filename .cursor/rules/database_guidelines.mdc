@@ -1,0 +1,49 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ ---
+description: Guidelines for database interactions and patterns
+globs: **/*.ts, **/*.tsx, **/prisma/*.prisma
+alwaysApply: true
+---
+
+# Database Guidelines
+
+When working with databases:
+
+## General Principles
+- **Type Safety**: Always use TypeScript interfaces/types for database models and query results.
+- **Connection Management**: Pool connections appropriately; never leave connections open.
+- **Error Handling**: Implement proper error catching with specific error types.
+- **Logging**: Log database operations for debugging and monitoring (but sanitize sensitive data).
+- **Security**: Never store credentials in code; use environment variables.
+
+## ORM Usage (Prisma)
+- **Schema Definition**: Keep Prisma schema organized with clear relationships.
+- **Migrations**: Use Prisma migrations for version control of database schema.
+- **Queries**: 
+  - Prefer `findUnique()` over `findFirst()` when querying by unique fields.
+  - Use `select` to avoid fetching unneeded data.
+  - Utilize `include` for eager loading related data.
+- **Transactions**: Use transactions for operations that require atomicity.
+
+## Performance
+- **Indexing**: Ensure proper indexes on frequently queried columns.
+- **Query Optimization**: 
+  - Avoid N+1 query problems by using proper joins/includes.
+  - Limit result sets with pagination (use `skip` and `take`).
+- **Caching**: Implement appropriate caching strategy for frequently accessed data.
+
+## Data Modeling
+- **Normalization**: Balance normalization with performance needs.
+- **Relationships**: Define clear one-to-many, many-to-many relationships.
+- **Enums**: Use enums for fields with a fixed set of possible values.
+
+## Testing
+- **Database Mocking**: Use mocks for unit tests.
+- **Test Database**: Use a separate test database for integration tests.
+- **Seed Data**: Create seed data for testing consistently.
+
+Always consider these principles to ensure robust, secure, and performant database operations.

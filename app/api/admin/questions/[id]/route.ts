@@ -18,7 +18,7 @@ async function checkAdminAccess() {
 // GET a single question by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin access
@@ -26,8 +26,8 @@ export async function GET(
     if (!isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
-    
-    const questionId = params.id;
+    const { id } = await params;
+    const questionId = id;
     
     const question = await prisma.question.findUnique({
       where: { id: questionId },
@@ -53,7 +53,7 @@ export async function GET(
 // PUT update a question
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin access
@@ -62,7 +62,8 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
     
-    const questionId = params.id;
+    const { id } = await params;
+    const questionId = id;
     const { text, description, category, isActive } = await request.json();
     
     // Validate required fields
@@ -109,7 +110,7 @@ export async function PUT(
 // DELETE a question
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin access
@@ -118,7 +119,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
     
-    const questionId = params.id;
+    const { id } = await params;
+    const questionId = id;
     
     // Check if question exists
     const existingQuestion = await prisma.question.findUnique({
