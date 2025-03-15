@@ -52,10 +52,10 @@ export default function ThankYouPage() {
                 </Link>
                 
                 <Link
-                  href="/browse"
+                  href="/reviews"
                   className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors text-center"
                 >
-                  Browse Reviews
+                  My Reviews
                 </Link>
               </div>
               
@@ -67,7 +67,7 @@ export default function ThankYouPage() {
                 <div className="grid md:grid-cols-3 gap-6">
                   <div className="p-6 bg-gray-50 rounded-lg">
                     <h4 className="font-medium text-gray-800 mb-2">Share on social</h4>
-                    <p className="text-gray-600 text-sm mb-3">Let your friends know about Hyelp</p>
+                    <p className="text-gray-600 text-sm mb-3">Let your friends know about Binocolo</p>
                     <div className="flex gap-3">
                       <a href="#" className="text-gray-400 hover:text-blue-500 transition-colors">
                         <span className="sr-only">Twitter</span>
@@ -100,7 +100,7 @@ export default function ThankYouPage() {
                   
                   <div className="p-6 bg-gray-50 rounded-lg">
                     <h4 className="font-medium text-gray-800 mb-2">Refer a friend</h4>
-                    <p className="text-gray-600 text-sm mb-3">Know someone who's moving? Let them know about Hyelp</p>
+                    <p className="text-gray-600 text-sm mb-3">Know someone who's moving? Let them know about Binocolo</p>
                     <a href="#" className="text-green-600 hover:text-green-700 font-medium text-sm">
                       Invite friends →
                     </a>

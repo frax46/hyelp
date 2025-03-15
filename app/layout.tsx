@@ -18,8 +18,20 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Hyelp - Find Your Perfect Neighborhood",
+  title: "Binocolo - Find Your Perfect Neighborhood",
   description: "Discover neighborhoods through honest reviews from real residents",
+  icons: {
+    icon: [
+      {
+        url: "/images/logo.png",
+        href: "/images/logo.png",
+      }
+    ],
+    apple: {
+      url: "/images/logo.png",
+      href: "/images/logo.png",
+    }
+  }
 };
 
 export default function RootLayout({

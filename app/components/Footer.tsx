@@ -9,15 +9,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-7 w-7 text-green-700" 
-                viewBox="0 0 20 20" 
-                fill="currentColor"
-              >
-                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-              </svg>
-              <span className="text-2xl font-bold text-green-700">hyelp</span>
+              <img 
+                src="/images/logo.png" 
+                alt="Binocolo Logo" 
+                className="h-8 w-auto"
+              />
+              <span className="text-2xl font-bold text-green-700">Binocolo</span>
             </Link>
             <p className="text-gray-700 mb-6 max-w-md">
               Your trusted resource for finding the perfect neighborhood. Real reviews from real residents help you make informed decisions about where to live.
@@ -47,11 +44,6 @@ export default function Footer() {
           <div>
             <h3 className="text-gray-900 font-semibold mb-4 border-b border-gray-100 pb-2">Explore</h3>
             <ul className="space-y-3">
-              <li>
-                <Link href="/browse" className="text-gray-700 hover:text-green-700 transition-colors">
-                  Browse Neighborhoods
-                </Link>
-              </li>
               <li>
                 <Link href="/submit-review" className="text-gray-700 hover:text-green-700 transition-colors">
                   Write a Review
@@ -84,14 +76,9 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-700 hover:text-green-700 transition-colors">
+                <a href="mailto:annobilfrance@gmail.com" className="text-gray-700 hover:text-green-700 transition-colors">
                   Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="text-gray-700 hover:text-green-700 transition-colors">
-                  Blog
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -99,8 +86,13 @@ export default function Footer() {
 
         <div className="pt-8 mt-8 border-t border-gray-100">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-500 mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()} Hyelp. All rights reserved.
+            <p className="text-gray-500 mb-4 md:mb-0 flex items-center gap-2">
+              <img 
+                src="/images/logo.png" 
+                alt="Binocolo Logo" 
+                className="h-4 w-auto"
+              />
+              &copy; {new Date().getFullYear()} Binocolo. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <Link href="/privacy" className="text-gray-500 hover:text-green-700 text-sm transition-colors">

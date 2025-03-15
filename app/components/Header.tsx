@@ -83,21 +83,17 @@ export default function Header() {
     >
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
         <Link href="/" ref={logoRef} className="flex items-center gap-2 text-green-700 font-bold text-xl">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            className="h-7 w-7"
-            viewBox="0 0 20 20" 
-            fill="currentColor"
-          >
-            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-          </svg>
-          <span>hyelp</span>
+          <img 
+            src="/images/logo.png" 
+            alt="Binocolo Logo" 
+            className="h-8 w-auto"
+          />
+          <span>Binocolo</span>
         </Link>
         
         {/* Desktop Navigation */}
         <nav ref={navItemsRef} className="hidden md:flex items-center gap-6">
           <Link href="/about" className="text-gray-700 hover:text-green-700 font-medium transition-colors">About</Link>
-          <Link href="/browse" className="text-gray-700 hover:text-green-700 font-medium transition-colors">Browse</Link>
           <Link href="/faq" className="text-gray-700 hover:text-green-700 font-medium transition-colors">FAQ</Link>
           
           {isLoaded && user && (
@@ -151,7 +147,6 @@ export default function Header() {
       <div ref={menuRef} className="md:hidden overflow-hidden h-0 opacity-0 bg-white">
         <div className="container py-4 px-4 flex flex-col gap-4">
           <Link href="/about" className="text-gray-700 hover:text-green-700 py-2 font-medium">About</Link>
-          <Link href="/browse" className="text-gray-700 hover:text-green-700 py-2 font-medium">Browse</Link>
           <Link href="/faq" className="text-gray-700 hover:text-green-700 py-2 font-medium">FAQ</Link>
           
           {isLoaded && user && (

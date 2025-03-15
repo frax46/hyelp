@@ -26,6 +26,8 @@ export default function AddressSearch({
   buttonText = "Search",
   redirectToResults = true,
 }: AddressSearchProps) {
+  console.log("AddressSearch component initializing with props:", { placeholder, buttonText, redirectToResults });
+  
   const [query, setQuery] = useState<string>("");
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -36,6 +38,7 @@ export default function AddressSearch({
 
   // Handle outside clicks to close suggestions
   useEffect(() => {
+    console.log("Setting up outside click handler");
     function handleClickOutside(event: MouseEvent) {
       if (suggestionRef.current && !suggestionRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
@@ -44,6 +47,7 @@ export default function AddressSearch({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
+      console.log("Cleaning up outside click handler");
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);

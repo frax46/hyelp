@@ -10,6 +10,9 @@ import Footer from "./components/Footer";
 import { Button } from "./components/Button";
 import { Card, CardContent, CardTitle, CardDescription } from "./components/Card";
 import AddressSearch from "./components/AddressSearch";
+import Link from "next/link";
+import HeroCarousel from "./components/HeroCarousel";
+import BuyMeACoffeeButton from "./components/BuyMeACoffeeButton";
 
 // Register ScrollTrigger plugin
 if (typeof window !== "undefined") {
@@ -155,23 +158,19 @@ export default function Home() {
     <main className="flex min-h-screen flex-col">
       <Header />
 
-      {/* Hero Section with Glass Morphism */}
-      <section ref={heroRef} className="hero-section">
-        <div className="glass-container">
-          <h1 ref={headingRef}>
-            Find your <span className="highlight">perfect</span> neighborhood
-          </h1>
-          <p ref={descriptionRef}>
-            Discover your ideal place to live with honest reviews from real residents.
-          </p>
-          
-          {/* Search Bar with Autocomplete */}
-          <div ref={searchFormRef} className="search-container">
-            <AddressSearch 
-              placeholder="Enter an address"
-              buttonText="Search"
-              redirectToResults={true}
-            />
+      {/* Hero Section with Carousel */}
+      <section ref={heroRef} className="hero-section-carousel">
+        <HeroCarousel />
+        
+        {/* Search Bar Overlay - responsive positioning for all devices */}
+        <div className="absolute bottom-24 md:top-1/2 md:-translate-y-1/2 right-0 md:right-8 lg:right-12 xl:right-24 2xl:right-32 z-30 w-full px-4 md:px-0 md:w-auto md:max-w-xs lg:max-w-sm xl:max-w-md">
+          <div ref={searchFormRef} className="search-container glass-search-container">
+            <div className="mb-4 text-white text-sm uppercase tracking-wider font-medium">Find Your Neighborhood</div>
+              <AddressSearch 
+                placeholder="Enter an address"
+                buttonText="Search"
+                redirectToResults={true}
+              />
           </div>
         </div>
       </section>
@@ -184,16 +183,16 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
             <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
-              <span className="text-gray-400 font-medium">Partner 1</span>
+              <Image src="/images/logo.png" alt="Binocolo Logo" width={90} height={30} />
             </div>
             <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
-              <span className="text-gray-400 font-medium">Partner 2</span>
+              <span className="text-gray-400 font-medium">Real Estate Partner</span>
             </div>
             <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
-              <span className="text-gray-400 font-medium">Partner 3</span>
+              <span className="text-gray-400 font-medium">Moving Service</span>
             </div>
             <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
-              <span className="text-gray-400 font-medium">Partner 4</span>
+              <span className="text-gray-400 font-medium">Home Inspector</span>
             </div>
           </div>
         </div>
@@ -203,14 +202,19 @@ export default function Home() {
       <section ref={featuresRef} className="section features">
         <div className="container">
           <h2 className="section-title">
-            Why Choose <span>Hyelp</span>
+            Why Choose <span>Binocolo</span>
           </h2>
           
           <div className="features-grid">
             <div className="feature-card">
               <div className="feature-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-6 w-6" 
+                  viewBox="0 0 24 24" 
+                  fill="currentColor"
+                >
+                  <path d="M9.5 6.5C9.5 8.43 7.93 10 6 10S2.5 8.43 2.5 6.5 4.07 3 6 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5S2.5 19.43 2.5 17.5 4.07 14 6 14s3.5 1.57 3.5 3.5zm11-11c0 1.93-1.57 3.5-3.5 3.5S13.5 8.43 13.5 6.5 15.07 3 17 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5s-3.5-1.57-3.5-3.5 1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5zm-12.75-3h7.5c.41 0 .75.34.75.75s-.34.75-.75.75h-7.5c-.41 0-.75-.34-.75-.75s.34-.75.75-.75z" />
                 </svg>
               </div>
               <h3 className="feature-title">Real Resident Reviews</h3>
@@ -219,8 +223,13 @@ export default function Home() {
             
             <div className="feature-card">
               <div className="feature-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-6 w-6" 
+                  viewBox="0 0 24 24" 
+                  fill="currentColor"
+                >
+                  <path d="M9.5 6.5C9.5 8.43 7.93 10 6 10S2.5 8.43 2.5 6.5 4.07 3 6 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5S2.5 19.43 2.5 17.5 4.07 14 6 14s3.5 1.57 3.5 3.5zm11-11c0 1.93-1.57 3.5-3.5 3.5S13.5 8.43 13.5 6.5 15.07 3 17 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5s-3.5-1.57-3.5-3.5 1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5zm-12.75-3h7.5c.41 0 .75.34.75.75s-.34.75-.75.75h-7.5c-.41 0-.75-.34-.75-.75s.34-.75.75-.75z" />
                 </svg>
               </div>
               <h3 className="feature-title">Detailed Neighborhood Data</h3>
@@ -229,8 +238,13 @@ export default function Home() {
             
             <div className="feature-card">
               <div className="feature-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-6 w-6" 
+                  viewBox="0 0 24 24" 
+                  fill="currentColor"
+                >
+                  <path d="M9.5 6.5C9.5 8.43 7.93 10 6 10S2.5 8.43 2.5 6.5 4.07 3 6 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5S2.5 19.43 2.5 17.5 4.07 14 6 14s3.5 1.57 3.5 3.5zm11-11c0 1.93-1.57 3.5-3.5 3.5S13.5 8.43 13.5 6.5 15.07 3 17 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5s-3.5-1.57-3.5-3.5 1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5zm-12.75-3h7.5c.41 0 .75.34.75.75s-.34.75-.75.75h-7.5c-.41 0-.75-.34-.75-.75s.34-.75.75-.75z" />
                 </svg>
               </div>
               <h3 className="feature-title">Verified Information</h3>
@@ -244,7 +258,7 @@ export default function Home() {
       <section ref={howItWorksRef} className="section section-alt">
         <div className="container">
           <h2 className="section-title">
-            How <span>Hyelp</span> Works
+            How <span>Binocolo</span> Works
           </h2>
           
           <div className="features-grid">
@@ -316,42 +330,54 @@ export default function Home() {
               </div>
             ) : (
               recentReviews.map((review, index) => (
-                <div key={review.id} className="feature-card">
-                  <div className="h-40 bg-green-50 mb-4 rounded flex items-center justify-center">
-                    <span className="text-green-700">{review.address.city} Review</span>
-                  </div>
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <h3 className="feature-title">{review.address.streetAddress}</h3>
-                      <div className="flex items-center">
+                <div key={review.id} className="feature-card flex flex-col">
+                  <div className="h-40 bg-green-50 mb-4 rounded flex items-center justify-center flex-col">
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      className="w-16 h-16 text-green-600 mb-2"
+                    >
+                      <path d="M9.5 6.5C9.5 8.43 7.93 10 6 10S2.5 8.43 2.5 6.5 4.07 3 6 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5S2.5 19.43 2.5 17.5 4.07 14 6 14s3.5 1.57 3.5 3.5zm11-11c0 1.93-1.57 3.5-3.5 3.5S13.5 8.43 13.5 6.5 15.07 3 17 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5s-3.5-1.57-3.5-3.5 1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5zm-12.75-3h7.5c.41 0 .75.34.75.75s-.34.75-.75.75h-7.5c-.41 0-.75-.34-.75-.75s.34-.75.75-.75z" />
+                    </svg>
+                    <span className="text-green-700 font-medium">{review.address.city} Review</span>
+                </div>
+                  <div className="flex-1 flex flex-col">
+                  <div className="flex justify-between items-center mb-3">
+                      <h3 className="feature-title truncate pr-2">{review.address.streetAddress}</h3>
+                      <div className="flex items-center flex-shrink-0">
                         <span className="text-green-700 font-medium mr-1">{review.averageScore.toFixed(1)}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-700" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      </div>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-700" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
                     </div>
-                    <p className="feature-description mb-4">
+                  </div>
+                    <p className="feature-description mb-4 text-sm overflow-hidden text-ellipsis">
                       {review.address.city}, {review.address.state} - {formatDate(review.createdAt)}
                     </p>
                     {review.answers.length > 0 && (
-                      <div className="mb-4 p-3 bg-gray-50 rounded italic text-sm text-gray-600">
+                      <div className="mb-4 p-3 bg-gray-50 rounded italic text-sm text-gray-600 overflow-hidden">
                         {review.answers.find((a: ReviewAnswer) => a.notes)?.notes || 
                          `Rating: ${review.averageScore.toFixed(1)} out of 5`}
                       </div>
                     )}
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-500 text-sm">
+                    <div className="flex justify-between items-center mt-auto">
+                      <span className="text-gray-500 text-sm truncate mr-2 max-w-[50%]">
                         {review.isAnonymous ? "Anonymous" : (review.userEmail || "Unknown")}
                       </span>
                       <button 
-                        className="px-4 py-2 bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors duration-300"
+                        className="px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors duration-300 whitespace-nowrap shadow-sm"
                         onClick={() => router.push(`/address/${review.addressId}`)}
                       >
-                        View Details
-                      </button>
-                    </div>
+                      View Details
+                    </button>
                   </div>
                 </div>
+              </div>
               ))
             )}
           </div>
@@ -359,30 +385,69 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="section">
-        <div className="container">
+      <section className="section relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div 
+            className="w-full h-full opacity-10" 
+            style={{
+              backgroundImage: "url('/images/house-2.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "blur(2px)"
+            }}
+          ></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-green-700/20 to-green-500/20"></div>
+        </div>
+        
+        <div className="container relative z-10">
           <h2 className="section-title">
-            What Our <span>Users Say</span>
+            What Our <span>Users Will Say</span>
           </h2>
+          <p className="text-gray-600 text-center max-w-2xl mx-auto mb-10">
+            We're excited to grow our community of users and add new features. Your feedback will help shape the future of Binocolo.
+          </p>
           
           <div className="grid md:grid-cols-2 gap-8">
             {[
               {
-                quote: "Hyelp helped me find the perfect neighborhood for my family. The reviews were honest and gave me a real sense of the community before we moved.",
+                quote: "Binocolo helped me find the perfect neighborhood for my family. The reviews were honest and gave me a real sense of the community before we moved.",
                 author: "Sarah Johnson",
                 role: "New Homeowner"
               },
               {
-                quote: "As someone who travels frequently for work, I use Hyelp to research neighborhoods in new cities. It's been an invaluable resource for finding safe and convenient areas.",
+                quote: "As someone who travels frequently for work, I use Binocolo to research neighborhoods in new cities. It's been an invaluable resource for finding safe and convenient areas.",
                 author: "Michael Chen",
                 role: "Business Traveler"
               }
             ].map((testimonial, index) => (
-              <div key={index} className="feature-card">
+              <div key={index} className="bg-white/60 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
                 <div className="flex flex-col h-full">
-                  <svg className="h-8 w-8 text-green-500 mb-6" fill="currentColor" viewBox="0 0 32 32" aria-hidden="true">
-                    <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
-                  </svg>
+                  <div className="flex justify-between items-center mb-6">
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className="h-8 w-8 text-green-600"
+                      viewBox="0 0 24 24" 
+                      fill="currentColor"
+                    >
+                      <path d="M9.5 6.5C9.5 8.43 7.93 10 6 10S2.5 8.43 2.5 6.5 4.07 3 6 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5S2.5 19.43 2.5 17.5 4.07 14 6 14s3.5 1.57 3.5 3.5zm11-11c0 1.93-1.57 3.5-3.5 3.5S13.5 8.43 13.5 6.5 15.07 3 17 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5s-3.5-1.57-3.5-3.5 1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5zm-12.75-3h7.5c.41 0 .75.34.75.75s-.34.75-.75.75h-7.5c-.41 0-.75-.34-.75-.75s.34-.75.75-.75z" />
+                    </svg>
+                    <Link
+                      href="/submit-review"
+                      className="text-green-600 hover:text-green-700 flex items-center gap-1"
+                      title="Add your own review"
+                    >
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className="h-5 w-5" 
+                        viewBox="0 0 20 20" 
+                        fill="currentColor"
+                      >
+                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                        <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-sm">Add review</span>
+                    </Link>
+                  </div>
                   <p className="text-gray-800 mb-6 flex-grow">{testimonial.quote}</p>
                   <div className="flex items-center">
                     <div className="h-12 w-12 rounded-full bg-green-100 overflow-hidden relative flex items-center justify-center">
@@ -397,6 +462,23 @@ export default function Home() {
               </div>
             ))}
           </div>
+          
+          <div className="mt-12 flex justify-center">
+            <Link 
+              href="/submit-review" 
+              className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors duration-300 flex items-center shadow-md"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-5 w-5 mr-2" 
+                viewBox="0 0 20 20" 
+                fill="currentColor"
+              >
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+              </svg>
+              Join Our Growing Community
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -407,15 +489,104 @@ export default function Home() {
             Ready to Find Your Perfect Neighborhood?
           </h2>
           <p className="text-white/90 mb-10 max-w-2xl mx-auto">
-            Join thousands of users who have found their ideal community using Hyelp's neighborhood insights.
+            Join thousands of users who have found their ideal community using Binocolo's neighborhood insights.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="search-button bg-white text-green-700 hover:bg-gray-100">
-              Sign Up Free
-            </button>
-            <button className="px-8 py-3 bg-transparent border border-white text-white font-medium rounded hover:bg-white/10 transition-all duration-300">
+            <Link 
+              href="/about" 
+              className="px-8 py-3 bg-transparent border border-white text-white font-medium rounded hover:bg-white/10 transition-all duration-300"
+            >
               Learn More
-            </button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Donation Section */}
+      <section className="section bg-gray-50 relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div 
+            className="w-full h-full opacity-5" 
+            style={{
+              backgroundImage: "url('/images/green-house.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "blur(3px)"
+            }}
+          ></div>
+        </div>
+        
+        <div className="container relative z-10">
+          <div className="max-w-4xl mx-auto bg-white/80 backdrop-blur-md rounded-xl shadow-lg p-8 md:p-12 border border-white/20">
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="md:w-1/3 flex flex-col items-center">
+                <div className="flex justify-center mb-6">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-16 w-16 text-green-600"
+                    viewBox="0 0 24 24" 
+                    fill="currentColor"
+                  >
+                    <path d="M9.5 6.5C9.5 8.43 7.93 10 6 10S2.5 8.43 2.5 6.5 4.07 3 6 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5S2.5 19.43 2.5 17.5 4.07 14 6 14s3.5 1.57 3.5 3.5zm11-11c0 1.93-1.57 3.5-3.5 3.5S13.5 8.43 13.5 6.5 15.07 3 17 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5s-3.5-1.57-3.5-3.5 1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5zm-12.75-3h7.5c.41 0 .75.34.75.75s-.34.75-.75.75h-7.5c-.41 0-.75-.34-.75-.75s.34-.75.75-.75z" />
+                  </svg>
+                </div>
+                
+                <div className="w-full flex justify-center">
+                  <BuyMeACoffeeButton />
+                </div>
+              </div>
+              
+              <div className="md:w-2/3">
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
+                    <path d="M12 16V12" />
+                    <path d="M12 8H12.01" />
+                  </svg>
+                  Your Neighborhood Guide Needs Your Help
+                </h3>
+                
+                <p className="text-gray-700 text-lg mb-4">
+                  Remember searching for your perfect neighborhood? The uncertainty, the questions, the research?
+                </p>
+                
+                <p className="text-gray-800 font-semibold text-lg mb-6">
+                  Binocolo exists to make that journey easier for everyone through real, honest reviews.
+                </p>
+                
+                <div className="bg-white/60 backdrop-blur-sm p-5 rounded-lg border border-green-100 mb-6">
+                  <h4 className="font-medium text-gray-800 mb-3">As a donation-supported platform, we're committed to:</h4>
+                  <ul className="space-y-2">
+                    <li className="flex items-start">
+                      <svg className="h-5 w-5 text-green-600 mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-gray-700">Keeping our service free and accessible to all</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg className="h-5 w-5 text-green-600 mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-gray-700">Providing unbiased neighborhood insights without corporate influence</span>
+                    </li>
+                    <li className="flex items-start">
+                      <svg className="h-5 w-5 text-green-600 mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-gray-700">Building features that truly serve house hunters, not advertisers</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <p className="text-gray-700 mb-6">
+                  Your support—no matter the size—directly powers the tools that help families find their forever homes and individuals discover communities where they belong.
+                </p>
+                
+                <p className="text-gray-800 font-semibold text-lg mb-2">
+                  Be the reason someone finds their perfect neighborhood.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
