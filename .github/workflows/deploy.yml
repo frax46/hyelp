@@ -32,12 +32,20 @@ jobs:
         run: |
           echo "REPO_LC=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
+      # Debug step to check file presence
+      - name: Debug directory contents
+        run: |
+          ls -la
+          echo "Current working directory: $(pwd)"
+          cat Dockerfile
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           tags: ghcr.io/${{ env.REPO_LC }}:latest
+          file: ./Dockerfile
           build-args: |
             NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
             NEXT_PUBLIC_ADMIN_EMAILS=${{ secrets.NEXT_PUBLIC_ADMIN_EMAILS }}
