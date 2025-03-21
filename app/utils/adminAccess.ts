@@ -16,6 +16,7 @@ export const isAdminEmail = (email: string | null | undefined): boolean => {
   if (!email) return false;
   
   const adminEmails = getAdminEmails();
+  console.log("adminEmails", adminEmails);
   return adminEmails.includes(email);
 };
 

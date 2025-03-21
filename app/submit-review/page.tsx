@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import Header from "../components/Header";
@@ -68,10 +68,11 @@ const PLACEHOLDER_QUESTIONS: Question[] = [
   },
 ];
 
-export default function SubmitReviewPage() {
+// Create a component that uses searchParams within a Suspense boundary
+function ReviewPageContent() {
   const { userId, isLoaded, isSignedIn } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()!;
   
   // Get address from URL parameters
   const buildingNumber = searchParams.get("buildingNumber") || "";
@@ -99,11 +100,11 @@ export default function SubmitReviewPage() {
     console.log("Setting questions:", PLACEHOLDER_QUESTIONS);
     setQuestions(PLACEHOLDER_QUESTIONS);
     
-    // If we have a complete address from URL, validate it
-    if (buildingNumber && streetName && city && county && postcode) {
+    // Check if we have address data
+    if (buildingNumber && streetName && city && postcode) {
       validateAddress();
     }
-  }, []);
+  }, [buildingNumber, streetName, city, postcode]);
 
   const validateAddress = async () => {
     if (!buildingNumber || !streetName || !city || !county || !postcode) {
@@ -513,6 +514,22 @@ export default function SubmitReviewPage() {
         </div>
       </main>
       
+      <Footer />
+    </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function SubmitReviewPage() {
+  return (
+    <div>
+      <Header />
+      <main className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">Submit a Neighborhood Review</h1>
+        <Suspense fallback={<div>Loading review form...</div>}>
+          <ReviewPageContent />
+        </Suspense>
+      </main>
       <Footer />
     </div>
   );

@@ -92,7 +92,7 @@ export default function Footer() {
                 alt="Binocolo Logo" 
                 className="h-4 w-auto"
               />
-              &copy; {new Date().getFullYear()} Binocolo. All rights reserved.
+              &copy; <span suppressHydrationWarning>{new Date().getFullYear()}</span> Binocolo. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <Link href="/privacy" className="text-gray-500 hover:text-green-700 text-sm transition-colors">

@@ -91,7 +91,10 @@ export default function ReviewsPage() {
       month: 'long',
       day: 'numeric'
     };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    // Use a safer approach that doesn't cause hydration errors
+    return <span suppressHydrationWarning>
+      {new Date(dateString).toLocaleDateString('en-US', options)}
+    </span>;
   };
   
   // Helper to render star ratings

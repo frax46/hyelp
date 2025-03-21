@@ -13,6 +13,7 @@ import AddressSearch from "./components/AddressSearch";
 import Link from "next/link";
 import HeroCarousel from "./components/HeroCarousel";
 import BuyMeACoffeeButton from "./components/BuyMeACoffeeButton";
+import FormattedDate from './components/FormattedDate';
 
 // Register ScrollTrigger plugin
 if (typeof window !== "undefined") {
@@ -78,16 +79,6 @@ export default function Home() {
     
     fetchRecentReviews();
   }, []);
-  
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    }).format(date);
-  };
   
   // Refs for GSAP animations
   const heroRef = useRef<HTMLElement>(null);
@@ -357,7 +348,7 @@ export default function Home() {
                     </div>
                   </div>
                     <p className="feature-description mb-4 text-sm overflow-hidden text-ellipsis">
-                      {review.address.city}, {review.address.state} - {formatDate(review.createdAt)}
+                      {review.address.city}, {review.address.state} - <FormattedDate dateString={review.createdAt} format="short" />
                     </p>
                     {review.answers.length > 0 && (
                       <div className="mb-4 p-3 bg-gray-50 rounded italic text-sm text-gray-600 overflow-hidden">

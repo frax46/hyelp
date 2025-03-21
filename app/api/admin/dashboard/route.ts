@@ -3,25 +3,113 @@ import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { isAdminEmail } from "@/app/utils/adminAccess";
 
-// Helper function to check admin access
+// Mark this route as dynamic since it needs to be rendered at request time
+export const dynamic = 'force-dynamic';
+
+// Helper function to check admin access with improved error handling
 async function checkAdminAccess() {
-  const user = await currentUser();
-  
-  if (!user) {
-    return false;
+  try {
+    const user = await currentUser();
+    
+    if (!user) {
+      return { 
+        isAuthorized: false, 
+        error: "Authentication required", 
+        status: 401 
+      };
+    }
+    
+    const userEmail = user.emailAddresses?.find(email => email.id === user.primaryEmailAddressId)?.emailAddress;
+    console.log("API - Current user email:", userEmail);
+    console.log("API - Admin emails allowed:", process.env.NEXT_PUBLIC_ADMIN_EMAILS);
+    
+    if (!isAdminEmail(userEmail)) {
+      console.log("API - Access denied: Not an admin email");
+      return { 
+        isAuthorized: false, 
+        error: "Unauthorized: Admin access required", 
+        status: 403 
+      };
+    }
+    
+    console.log("API - Admin access granted for:", userEmail);
+    return { 
+      isAuthorized: true, 
+      user,
+      status: 200
+    };
+  } catch (error) {
+    console.error("Error in admin authorization:", error);
+    return { 
+      isAuthorized: false, 
+      error: "Authorization error", 
+      status: 500 
+    };
   }
-  
-  const email = user.emailAddresses?.find(email => email.id === user.primaryEmailAddressId)?.emailAddress;
-  return isAdminEmail(email);
 }
 
 export async function GET(request: NextRequest) {
+  const accessCheck = await checkAdminAccess();
+  
+  if (!accessCheck.isAuthorized) {
+    return NextResponse.json(
+      { error: accessCheck.error }, 
+      { status: accessCheck.status }
+    );
+  }
+
   try {
-    // Check admin access
-    const isAdmin = await checkAdminAccess();
-    if (!isAdmin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    // Get dashboard statistics
+    const totalReviews = await prisma.review.count();
+    const totalQuestions = await prisma.question.count();
+    
+    // Get total unique users by counting distinct userIds
+    const uniqueUserIds = await prisma.review.groupBy({
+      by: ['userId'],
+      where: {
+        userId: { not: null }
+      }
+    });
+    const totalUsers = uniqueUserIds.length;
+    
+    // Get recent activity
+    const recentReviews = await prisma.review.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      include: { 
+        address: true,
+        answers: true
+      }
+    });
+    
+    // For questions, use the answers to get recently answered questions
+    const recentAnswers = await prisma.answer.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      include: { 
+        question: true,
+        review: {
+          include: {
+            address: true
+          }
+        }
+      }
+    });
+    
+    // Get top addresses
+    const topAddresses = await prisma.address.findMany({
+      take: 5,
+      orderBy: {
+        reviews: {
+          _count: 'desc'
+        }
+      },
+      include: {
+        _count: {
+          select: { reviews: true }
+        }
+      }
+    });
     
     // Calculate date one month ago for comparison
     const today = new Date();
@@ -29,7 +117,6 @@ export async function GET(request: NextRequest) {
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
     
     // Get review statistics
-    const totalReviews = await prisma.review.count();
     const reviewsLastMonth = await prisma.review.count({
       where: {
         createdAt: {
@@ -37,6 +124,7 @@ export async function GET(request: NextRequest) {
         },
       },
     });
+    
     const reviewsMonthBeforeLast = await prisma.review.count({
       where: {
         createdAt: {
@@ -45,24 +133,18 @@ export async function GET(request: NextRequest) {
         },
       },
     });
+    
     const reviewGrowthRate = reviewsMonthBeforeLast > 0 
       ? Math.round(((reviewsLastMonth - reviewsMonthBeforeLast) / reviewsMonthBeforeLast) * 100) 
       : 100;
 
-    // Get user statistics - Using a different approach to count unique users
-    let totalUsers = 0;
+    // Get user statistics
     let usersLastMonth = 0;
     let usersMonthBeforeLast = 0;
     let userGrowthRate = 0;
     let formattedRecentUser = null;
 
     try {
-      // Get unique user IDs through groupBy instead of distinct
-      const uniqueUsers = await prisma.review.groupBy({
-        by: ['userId'],
-      });
-      totalUsers = uniqueUsers.length;
-      
       // Users last month
       const uniqueUsersLastMonth = await prisma.review.groupBy({
         by: ['userId'],
@@ -70,6 +152,7 @@ export async function GET(request: NextRequest) {
           createdAt: {
             gte: oneMonthAgo,
           },
+          userId: { not: null }
         },
       });
       usersLastMonth = uniqueUsersLastMonth.length;
@@ -82,6 +165,7 @@ export async function GET(request: NextRequest) {
             gte: new Date(oneMonthAgo.getFullYear(), oneMonthAgo.getMonth() - 1, oneMonthAgo.getDate()),
             lt: oneMonthAgo,
           },
+          userId: { not: null }
         },
       });
       usersMonthBeforeLast = uniqueUsersMonthBeforeLast.length;
@@ -97,6 +181,7 @@ export async function GET(request: NextRequest) {
         },
         select: {
           userId: true,
+          userEmail: true,
           createdAt: true
         }
       });
@@ -104,7 +189,7 @@ export async function GET(request: NextRequest) {
       if (mostRecentUser) {
         formattedRecentUser = {
           id: mostRecentUser.userId || 'unknown',
-          email: 'User ID: ' + (mostRecentUser.userId?.substring(0, 8) || 'unknown'),
+          email: mostRecentUser.userEmail || ('User ID: ' + (mostRecentUser.userId?.substring(0, 8) || 'unknown')),
           name: 'Anonymous User',
           createdAt: mostRecentUser.createdAt.toISOString(),
         };
@@ -112,184 +197,42 @@ export async function GET(request: NextRequest) {
     } catch (error) {
       console.error("Error fetching user statistics:", error);
       // Provide fallback values
-      totalUsers = 0;
       userGrowthRate = 0;
     }
 
     // Get average rating
-    const answers = await prisma.answer.findMany({
+    const allAnswers = await prisma.answer.findMany({
       select: {
         score: true,
-      },
-      where: {
-        score: {
-          gt: 0, // Only include scores greater than 0
-        },
-      },
-    });
-    const totalScore = answers.reduce((sum, answer) => sum + answer.score, 0);
-    const averageRating = answers.length > 0 ? parseFloat((totalScore / answers.length).toFixed(1)) : 0;
-    
-    // Get answers from last month and month before for trend
-    const answersLastMonth = await prisma.answer.findMany({
-      select: {
-        score: true,
-      },
-      where: {
-        score: {
-          gt: 0, // Only include scores greater than 0
-        },
-        createdAt: {
-          gte: oneMonthAgo,
-        },
-      },
-    });
-    const answersMonthBeforeLast = await prisma.answer.findMany({
-      select: {
-        score: true,
-      },
-      where: {
-        score: {
-          gt: 0, // Only include scores greater than 0
-        },
-        createdAt: {
-          gte: new Date(oneMonthAgo.getFullYear(), oneMonthAgo.getMonth() - 1, oneMonthAgo.getDate()),
-          lt: oneMonthAgo,
-        },
       },
     });
     
-    const avgLastMonth = answersLastMonth.length > 0 
-      ? answersLastMonth.reduce((sum, a) => sum + a.score, 0) / answersLastMonth.length 
+    const averageRating = allAnswers.length > 0
+      ? allAnswers.reduce((sum, current) => sum + current.score, 0) / allAnswers.length
       : 0;
-    const avgMonthBeforeLast = answersMonthBeforeLast.length > 0 
-      ? answersMonthBeforeLast.reduce((sum, a) => sum + a.score, 0) / answersMonthBeforeLast.length 
-      : 0;
-    
-    const ratingDiff = avgLastMonth - avgMonthBeforeLast;
-    const ratingTrend = Math.abs(ratingDiff) < 0.1 ? "stable" : ratingDiff > 0 ? "up" : "down";
-    
-    // Get active questions count
-    const activeQuestions = await prisma.question.count({
-      where: {
-        isActive: true,
-      },
-    });
-    
-    // Get questions added in the last month
-    const newQuestionsThisMonth = await prisma.question.count({
-      where: {
-        createdAt: {
-          gte: oneMonthAgo,
-        },
-        isActive: true,
-      },
-    });
-    
-    // Get recent activity - modified to include answers and calculate average score
-    const recentReviews = await prisma.review.findMany({
-      take: 1,
-      orderBy: {
-        createdAt: "desc",
-      },
-      include: {
-        address: true,
-        answers: {
-          include: {
-            question: true,
-          },
-        },
-      },
-    });
-    
-    // Process reviews to include average score
-    const processedRecentReviews = recentReviews.map(review => {
-      const validAnswers = review.answers.filter(answer => answer.score > 0);
-      const totalScore = validAnswers.reduce((sum, answer) => sum + answer.score, 0);
-      const averageScore = validAnswers.length > 0 ? parseFloat((totalScore / validAnswers.length).toFixed(1)) : 0;
-      
-      return {
-        ...review,
-        averageScore,
-      };
-    });
-    
-    const recentQuestions = await prisma.question.findMany({
-      take: 1,
-      orderBy: {
-        updatedAt: "desc",
-      },
-    });
-    
-    // Get top rated addresses with full review details including answers
-    const addresses = await prisma.address.findMany({
-      include: {
-        reviews: {
-          include: {
-            answers: true,
-          },
-        },
-      },
-      take: 10,
-    });
-    
-    // Process addresses to include average score for each review
-    const addressesWithRatings = addresses.map(address => {
-      // Process each review to include its average score
-      const reviewsWithScores = address.reviews.map(review => {
-        const validAnswers = review.answers.filter(answer => answer.score > 0);
-        const totalScore = validAnswers.reduce((sum, answer) => sum + answer.score, 0);
-        const reviewAverage = validAnswers.length > 0 ? parseFloat((totalScore / validAnswers.length).toFixed(1)) : 0;
-        
-        return {
-          ...review,
-          averageScore: reviewAverage
-        };
-      });
-      
-      // Calculate address-level average from all review scores
-      const reviewsWithValidScores = reviewsWithScores.filter(review => review.averageScore > 0);
-      const addressTotalScore = reviewsWithValidScores.reduce((sum, review) => sum + review.averageScore, 0);
-      const addressAverageScore = reviewsWithValidScores.length > 0 
-        ? parseFloat((addressTotalScore / reviewsWithValidScores.length).toFixed(1)) 
-        : 0;
-      
-      return {
-        id: address.id,
-        address: address.streetAddress,
-        city: address.city,
-        reviewCount: address.reviews.length,
-        averageRating: addressAverageScore,
-        reviews: reviewsWithScores,
-      };
-    });
-    
-    // Sort by rating and filter out addresses with no reviews
-    const topAddresses = addressesWithRatings
-      .filter(a => a.reviewCount > 0)
-      .sort((a, b) => b.averageRating - a.averageRating || b.reviewCount - a.reviewCount)
-      .slice(0, 3);
-    
+
+    // Prepare dashboard data
     return NextResponse.json({
       statistics: {
         totalReviews,
-        reviewGrowthRate,
+        totalQuestions,
         totalUsers,
+        reviewGrowthRate,
         userGrowthRate,
         averageRating,
-        ratingTrend,
-        activeQuestions,
-        newQuestionsThisMonth,
       },
       recentActivity: {
-        latestReview: processedRecentReviews[0] || null,
-        latestUser: formattedRecentUser,
-        latestQuestion: recentQuestions[0] || null,
+        latestReview: recentReviews[0] || null,
+        latestAnswer: recentAnswers[0] || null,
+        recentUser: formattedRecentUser,
       },
       topAddresses,
     });
   } catch (error) {
-    console.error("Error fetching dashboard data:", error);
-    return NextResponse.json({ error: "Failed to fetch dashboard data" }, { status: 500 });
+    console.error("Error generating dashboard data:", error);
+    return NextResponse.json(
+      { error: "Failed to generate dashboard data" },
+      { status: 500 }
+    );
   }
 } 

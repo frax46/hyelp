@@ -6,23 +6,33 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
+    // Improve hydration by optimizing client references
+    optimizePackageImports: ['react', 'react-dom'],
   },
-  // Completely disable static page generation
-  staticPageGenerationTimeout: 0,
-  // Skip prerendering entirely to work around the issue
-  skipMiddlewareUrlNormalize: true,
-  skipTrailingSlashRedirect: true,
+  // Increase timeout for static page generation
+  staticPageGenerationTimeout: 300,
+  // Optimize images
   images: {
     domains: ['images.unsplash.com', 'plus.unsplash.com'],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60,
   },
+  // Don't make builds fail on lint errors
   eslint: {
-    // Warning instead of error
     ignoreDuringBuilds: true,
   },
+  // Don't make builds fail on TS errors
   typescript: {
-    // Warning instead of error
     ignoreBuildErrors: true,
   },
+  // Improve performance by enabling React strict mode
+  reactStrictMode: true,
+  // Improve performance by compressing
+  compress: true,
+  // Configure trailing slashes
+  trailingSlash: false,
+  // Improve SEO
+  poweredByHeader: false,
 }
 
 module.exports = nextConfig 

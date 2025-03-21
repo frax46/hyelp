@@ -4,6 +4,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { isAdminEmail } from "../../utils/adminAccess";
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog";
 
 type Question = {
   id: string;
@@ -30,6 +38,8 @@ export default function AdminQuestionsPage() {
     category: "",
     isActive: true
   });
+  const [questionToDelete, setQuestionToDelete] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Check admin status
   useEffect(() => {
@@ -144,12 +154,15 @@ export default function AdminQuestionsPage() {
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this question?')) {
-      return;
-    }
+    setQuestionToDelete(id);
+  };
+
+  const confirmDeleteQuestion = async () => {
+    if (!questionToDelete) return;
     
+    setDeleteLoading(true);
     try {
-      const response = await fetch(`/api/admin/questions/${id}`, {
+      const response = await fetch(`/api/admin/questions/${questionToDelete}`, {
         method: 'DELETE',
       });
       
@@ -158,10 +171,17 @@ export default function AdminQuestionsPage() {
       }
       
       // Update list
-      setQuestions(questions.filter(q => q.id !== id));
+      setQuestions(questions.filter(q => q.id !== questionToDelete));
+      setQuestionToDelete(null);
     } catch (err) {
       setError('Error deleting question. Please try again.');
+    } finally {
+      setDeleteLoading(false);
     }
+  };
+
+  const cancelDelete = () => {
+    setQuestionToDelete(null);
   };
 
   if (!isLoaded || !isAdmin) {
@@ -332,6 +352,38 @@ export default function AdminQuestionsPage() {
           )}
         </div>
       </div>
+
+      {/* Delete Question Dialog */}
+      <Dialog open={questionToDelete !== null} onOpenChange={(open) => !open && cancelDelete()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Question</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this question? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-start">
+            <div className="flex space-x-2 w-full justify-end mt-4">
+              <button
+                type="button"
+                onClick={cancelDelete}
+                disabled={deleteLoading}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteQuestion}
+                disabled={deleteLoading}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
+              >
+                {deleteLoading ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 } 

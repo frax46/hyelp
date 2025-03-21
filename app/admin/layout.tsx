@@ -68,7 +68,7 @@ export default function AdminLayout({
         {/* Admin Footer */}
         <footer className="bg-white border-t border-gray-200 py-4 text-center text-sm text-gray-500">
           <div className="container mx-auto px-4">
-            <p>© {new Date().getFullYear()} Hyelp Admin Panel. All rights reserved.</p>
+            <p>© <span suppressHydrationWarning>{new Date().getFullYear()}</span> Hyelp Admin Panel. All rights reserved.</p>
           </div>
         </footer>
       </SignedIn>

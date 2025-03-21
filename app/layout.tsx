@@ -40,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${montserrat.variable}`}>
+    <html lang="en" className={`${poppins.variable} ${montserrat.variable}`} suppressHydrationWarning>
       <ClerkProvider>
         <body className="bg-gray-50 text-gray-900 antialiased">
           {children}
