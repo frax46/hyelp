@@ -1,5 +1,6 @@
 name: Deploy to VPS with GitHub Container Registry
 
+# Trigger a new workflow run to test permissions
 on:
   push:
     branches: [ main ]
