@@ -74,7 +74,7 @@ jobs:
                 - DATABASE_URL=${{ secrets.DATABASE_URL }}
                 - CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
                 - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-                - NEXT_PUBLIC_ADMIN_EMAILS=${{ secrets.NEXT_PUBLIC_ADMIN_EMAILS }}
+                - "NEXT_PUBLIC_ADMIN_EMAILS=${{ secrets.NEXT_PUBLIC_ADMIN_EMAILS }}"
                 - NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
           EOF
 
