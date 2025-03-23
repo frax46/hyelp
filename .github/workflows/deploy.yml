@@ -1,6 +1,6 @@
 name: Deploy to VPS with GitHub Container Registry
 
-# Using personal access token for authentication
+# Using personal access token for authentication (PAT)
 on:
   push:
     branches: [ main ]
