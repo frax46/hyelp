@@ -99,19 +99,19 @@ jobs:
             # Log in to GitHub Container Registry with PAT
             echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
             
-            # Pull latest image and deploy
-            docker compose pull
-            docker compose down
-            docker compose up -d
+            # Pull latest image and deploy using docker-compose instead of docker compose
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d
             
             # Clean up old images
             docker image prune -f
             
             # Show container status
-            docker compose ps
+            docker-compose ps
             
             # Show logs (last 20 lines)
-            docker compose logs --tail=20
+            docker-compose logs --tail=20
 
       - name: Deployment status
         run: |
