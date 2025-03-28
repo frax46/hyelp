@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import { MessageSquare, Star, Search, Users, HomeIcon, MapPin } from "lucide-react";
+import { MessageSquare, Star, Search, Users, HomeIcon } from "lucide-react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -159,7 +159,7 @@ export default function AboutPage() {
                   Our Mission
                 </h2>
                 <p className="text-gray-700 text-lg leading-relaxed">
-                  At hyelp, we believe that finding the right place to live shouldn't be a guessing game. 
+                  At binocolo, we believe that finding the right place to live shouldn't be a guessing game. 
                   Whether you're hunting for a new home, apartment, or just curious about a neighborhood, 
                   we're here to help you make informed decisions with real, honest insights from people who've been there.
                 </p>
@@ -256,8 +256,10 @@ export default function AboutPage() {
                   Why We Started This
                 </h2>
                 <p className="text-gray-700 text-lg leading-relaxed">
-                  We've all been there—moving to a new spot, hoping it's as good as it looks online, only to discover 
-                  surprises (good or bad) that no one warned us about. We created hyelp to flip the script.
+                  Moving to a new place is always a leap of faith. You can look at photos, read descriptions, and tour the 
+                  property, but until you actually live there, you never truly know what you're getting into. Too often, we 
+                  found ourselves wishing we'd known about certain aspects of a neighborhood or building—little quirks or 
+                  surprises (good or bad) that no one warned us about. We created binocolo to flip the script.
                 </p>
                 <p className="text-gray-700 text-lg leading-relaxed mt-4">
                   By crowdsourcing real experiences, we're building a resource that empowers everyone to move with confidence. 

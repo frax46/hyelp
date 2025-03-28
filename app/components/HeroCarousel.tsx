@@ -13,7 +13,7 @@ interface CarouselImage {
 }
 
 export default function HeroCarousel() {
-  console.log("HeroCarousel component initializing");
+  // console.log("HeroCarousel component initializing");
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
@@ -49,63 +49,63 @@ export default function HeroCarousel() {
     }
   ];
   
-  console.log("Images array initialized with", images.length, "images");
+  // console.log("Images array initialized with", images.length, "images");
 
   const goToSlide = (index: number) => {
-    console.log("goToSlide called with index:", index);
+    // console.log("goToSlide called with index:", index);
     setCurrentIndex(index);
   };
 
   const goToPrevious = () => {
-    console.log("goToPrevious called, current index:", currentIndex);
+    // console.log("goToPrevious called, current index:", currentIndex);
     const isFirstSlide = currentIndex === 0;
     const newIndex = isFirstSlide ? images.length - 1 : currentIndex - 1;
     setCurrentIndex(newIndex);
-    console.log("New index after goToPrevious:", newIndex);
+    // console.log("New index after goToPrevious:", newIndex);
   };
 
   const goToNext = () => {
-    console.log("goToNext called, current index:", currentIndex);
+    // console.log("goToNext called, current index:", currentIndex);
     const isLastSlide = currentIndex === images.length - 1;
     const newIndex = isLastSlide ? 0 : currentIndex + 1;
     setCurrentIndex(newIndex);
-    console.log("New index after goToNext:", newIndex);
+    // console.log("New index after goToNext:", newIndex);
   };
 
   // Auto-advance slides
   useEffect(() => {
-    console.log("Auto-advance effect running, setting up interval");
+    // console.log("Auto-advance effect running, setting up interval");
     const slideInterval = setInterval(() => {
       goToNext();
     }, 5000);
     
     return () => {
-      console.log("Cleaning up auto-advance interval");
+      // console.log("Cleaning up auto-advance interval");
       clearInterval(slideInterval);
     };
   }, [currentIndex]);
 
   // Animation with GSAP
   useEffect(() => {
-    console.log("GSAP animation effect running after index change to:", currentIndex);
+    // console.log("GSAP animation effect running after index change to:", currentIndex);
     if (carouselRef.current) {
       const contentElement = carouselRef.current.querySelector(".carousel-content");
       if (contentElement) {
-        console.log("Animating carousel content element");
+        // console.log("Animating carousel content element");
         gsap.fromTo(
           contentElement,
           { opacity: 0, y: 20 },
           { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
         );
       } else {
-        console.error("Could not find carousel-content element");
+        // console.error("Could not find carousel-content element");
       }
     } else {
-      console.error("carouselRef.current is null");
+      // console.error("carouselRef.current is null");
     }
   }, [currentIndex]);
 
-  console.log("HeroCarousel rendering with currentIndex:", currentIndex);
+  // console.log("HeroCarousel rendering with currentIndex:", currentIndex);
   return (
     <div className="relative w-full h-full overflow-hidden" ref={carouselRef}>
       {/* Main carousel */}

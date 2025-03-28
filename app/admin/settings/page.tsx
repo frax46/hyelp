@@ -35,9 +35,9 @@ export default function AdminSettingsPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [settings, setSettings] = useState<SystemSettings>({
-    siteName: "Hyelp",
-    siteDescription: "Honest landlord reviews",
-    contactEmail: "support@hyelp.com",
+    siteName: "binocolo",
+    siteDescription: "Find your perfect neighborhood",
+    contactEmail: "binocoloapp@gmail.com",
     enableReviews: true,
     requireApproval: false,
     defaultReviewLimit: 10,
@@ -80,9 +80,9 @@ export default function AdminSettingsPage() {
       // Simulate API call
       setTimeout(() => {
         setSettings({
-          siteName: "Hyelp",
-          siteDescription: "Honest landlord reviews",
-          contactEmail: "support@hyelp.com",
+          siteName: "binocolo",
+          siteDescription: "Find your perfect neighborhood",
+          contactEmail: "binocoloapp@gmail.com",
           enableReviews: true,
           requireApproval: false,
           defaultReviewLimit: 10,

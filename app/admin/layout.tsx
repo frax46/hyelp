@@ -4,8 +4,8 @@ import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 import { Montserrat, Poppins } from "next/font/google";
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard - Hyelp",
-  description: "Admin section of Hyelp",
+  title: "Admin Dashboard - binocolo",
+  description: "Admin section of binocolo",
 };
 
 export default function AdminLayout({
@@ -22,10 +22,9 @@ export default function AdminLayout({
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Link href="/" className="text-2xl font-bold text-blue-600 font-montserrat">
-                  Hyelp
-                  <span className="bg-blue-600 text-white text-xs px-2 py-1 ml-2 rounded-md uppercase">
-                    Admin
-                  </span>
+                  <h1 className="text-xl md:text-2xl font-bold text-white flex items-center">
+                    <span className="mr-2">🌍</span> binocolo
+                  </h1>
                 </Link>
               </div>
               <nav>
@@ -68,7 +67,7 @@ export default function AdminLayout({
         {/* Admin Footer */}
         <footer className="bg-white border-t border-gray-200 py-4 text-center text-sm text-gray-500">
           <div className="container mx-auto px-4">
-            <p>© <span suppressHydrationWarning>{new Date().getFullYear()}</span> Hyelp Admin Panel. All rights reserved.</p>
+            <p>© <span suppressHydrationWarning>{new Date().getFullYear()}</span> binocolo Admin Panel. All rights reserved.</p>
           </div>
         </footer>
       </SignedIn>

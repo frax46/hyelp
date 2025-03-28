@@ -29,8 +29,8 @@ export default function FAQPage() {
   // FAQ data
   const faqItems: FAQItem[] = [
     {
-      question: "What is hyelp?",
-      answer: "hyelp is a user-driven platform where people rate and review the places they've lived—houses, apartments, neighborhoods, you name it. Our goal is to help others get a real sense of what it's like to live somewhere before they make a move."
+      question: "What is binocolo?",
+      answer: "binocolo is a user-driven platform where people rate and review the places they've lived—houses, apartments, neighborhoods, you name it. Our goal is to help others get a real sense of what it's like to live somewhere before they make a move."
     },
     {
       question: "How does it work?",
@@ -46,7 +46,7 @@ export default function FAQPage() {
     },
     {
       question: "Is this free to use?",
-      answer: "Yes, absolutely! hyelp is free for everyone to browse, search, and contribute to. We're here to help, not to charge."
+      answer: "Yes, absolutely! binocolo is free for everyone to browse, search, and contribute to. We're here to help, not to charge."
     },
     {
       question: "How do you make sure reviews are legit?",
@@ -170,7 +170,7 @@ export default function FAQPage() {
               Frequently Asked Questions
             </h1>
             <p className="text-lg text-gray-700 max-w-3xl mx-auto">
-              Find answers to common questions about using hyelp, submitting reviews, and getting involved in our community.
+              Find answers to common questions about using binocolo, submitting reviews, and getting involved in our community.
             </p>
           </div>
         </section>
@@ -223,7 +223,7 @@ export default function FAQPage() {
               Have more questions?
             </h2>
             <p className="text-gray-700 text-lg mb-8">
-              Drop us a line at <a href="mailto:contact@hyelp.com" className="text-green-700 hover:underline">contact@hyelp.com</a>, and we'll get back to you as soon as we can. Happy reviewing!
+              Drop us a line at <a href="mailto:binocoloapp@gmail.com" className="text-green-700 hover:underline">binocoloapp@gmail.com</a>, and we'll get back to you as soon as we can. Happy reviewing!
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link 

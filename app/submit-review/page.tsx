@@ -274,22 +274,16 @@ function ReviewPageContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      
-      <main className="flex-grow">
-        <div className="bg-gray-50 py-12">
-          <div className="container mx-auto max-w-7xl px-6">
-            <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Submit an Address Review
-            </h1>
-            <p className="text-gray-800 text-lg">
-              Share your experience to help others find their perfect location
-            </p>
-          </div>
-        </div>
-        
-        <div className="container mx-auto max-w-3xl px-6 py-12">
+    <div>
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-sm">
+          <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Submit an Address Review
+          </h1>
+          <p className="text-gray-800 text-lg">
+            Share your experience to help others find their perfect location
+          </p>
+
           {!isLoaded ? (
             <div className="flex justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-green-800 border-r-2"></div>
@@ -513,8 +507,6 @@ function ReviewPageContent() {
           )}
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 }

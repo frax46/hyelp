@@ -17,7 +17,7 @@ export default function DesignSystem() {
               Design System
             </h1>
             <p className="text-gray-600 text-lg">
-              A showcase of UI components and styles used across the Hyelp platform
+              A showcase of UI components and styles used across the binocolo platform
             </p>
           </div>
         </div>

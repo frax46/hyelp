@@ -59,6 +59,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [recentReviews, setRecentReviews] = useState<Review[]>([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
+  const [showSearchForm, setShowSearchForm] = useState(false);
   
   // Fetch recent reviews
   useEffect(() => {
@@ -153,15 +154,48 @@ export default function Home() {
       <section ref={heroRef} className="hero-section-carousel">
         <HeroCarousel />
         
-        {/* Search Bar Overlay - responsive positioning for all devices */}
-        <div className="absolute bottom-24 md:top-1/2 md:-translate-y-1/2 right-0 md:right-8 lg:right-12 xl:right-24 2xl:right-32 z-30 w-full px-4 md:px-0 md:w-auto md:max-w-xs lg:max-w-sm xl:max-w-md">
-          <div ref={searchFormRef} className="search-container glass-search-container">
-            <div className="mb-4 text-white text-sm uppercase tracking-wider font-medium">Find Your Neighborhood</div>
-              <AddressSearch 
-                placeholder="Enter an address"
-                buttonText="Search"
-                redirectToResults={true}
-              />
+        {/* Search button that reveals search form when clicked */}
+        <div className="absolute inset-x-0 bottom-0 z-30 flex justify-center items-center">
+          <div className="search-container-wrapper mb-12 md:mb-16 flex flex-col items-center" style={{ width: '100%', maxWidth: '500px' }}>
+            <div 
+              className="search-form-container w-full transition-all duration-500 ease-in-out"
+              style={{ 
+                maxHeight: showSearchForm ? '400px' : '0px',
+                opacity: showSearchForm ? 1 : 0,
+                overflow: 'hidden',
+                transform: showSearchForm ? 'translateY(0)' : 'translateY(20px)',
+                marginBottom: showSearchForm ? '1rem' : '0'
+              }}
+            >
+              <div className="search-arrow"></div>
+              <div ref={searchFormRef} className="search-container glass-morphism">
+                <div className="text-center">
+                  <span className="text-gradient">Find Your Perfect Neighborhood</span>
+                </div>
+                <AddressSearch 
+                  placeholder="Enter an address"
+                  buttonText="EXPLORE"
+                  redirectToResults={true}
+                />
+              </div>
+            </div>
+            
+            <button
+              className="search-toggle-btn"
+              onClick={() => setShowSearchForm(!showSearchForm)}
+              aria-label="Toggle search form"
+            >
+              {showSearchForm ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              )}
+            </button>
           </div>
         </div>
       </section>
