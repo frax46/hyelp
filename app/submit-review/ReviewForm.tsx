@@ -29,7 +29,6 @@ interface FormData {
       notes: string;
     };
   };
-  isAnonymous: boolean;
 }
 
 interface ReviewFormProps {
@@ -143,8 +142,7 @@ export default function ReviewForm({ initialAddress }: ReviewFormProps) {
     city: initialAddress?.city || "",
     county: initialAddress?.county || "",
     postcode: initialAddress?.postcode || "",
-    answers: {},
-    isAnonymous: false
+    answers: {}
   });
   
   // Validation errors state
@@ -402,7 +400,7 @@ export default function ReviewForm({ initialAddress }: ReviewFormProps) {
     
     try {
       // Extract address information for API
-      const { buildingNumber, streetName, flatNumber, city, county, postcode, answers, isAnonymous } = formData;
+      const { buildingNumber, streetName, flatNumber, city, county, postcode, answers } = formData;
       
       // Create address in format expected by API
       const streetAddress = flatNumber 
@@ -424,8 +422,7 @@ export default function ReviewForm({ initialAddress }: ReviewFormProps) {
           city,
           state,
           zipCode,
-          answers,
-          isAnonymous
+          answers
         }),
       });
       
@@ -781,19 +778,6 @@ export default function ReviewForm({ initialAddress }: ReviewFormProps) {
               ) : (
                 <p className="text-gray-500 mt-2">No additional comments provided</p>
               )}
-            </div>
-            
-            <div className="mt-6">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="w-5 h-5 text-green-600 rounded focus:ring-green-500"
-                  name="isAnonymous"
-                  checked={formData.isAnonymous}
-                  onChange={handleCheckboxChange}
-                />
-                <span className="ml-2 text-gray-700">Submit this review anonymously</span>
-              </label>
             </div>
             
             <div className="mt-8 flex justify-between">
