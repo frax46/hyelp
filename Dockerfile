@@ -10,8 +10,9 @@ ENV DATABASE_URL="mongodb://dummy:dummy@localhost:27017/dummy"
 COPY package*.json ./
 # Install dependencies with platform-specific binaries for tailwindcss
 RUN npm install
-# Install the specific tailwindcss binary for alpine linux
+# Install the specific platform binaries for alpine linux
 RUN npm install --platform=linux --arch=x64 @tailwindcss/oxide-linux-x64-musl
+RUN npm install --platform=linux --arch=x64 lightningcss-linux-x64-musl
 COPY . .
 RUN npx prisma generate
 # Skip actual database connections during build by setting NODE_ENV
@@ -28,8 +29,9 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/prisma ./prisma
 # Install production dependencies
 RUN npm install --only=production
-# Install the specific tailwindcss binary for alpine linux in production
+# Install the specific platform binaries for alpine linux in production
 RUN npm install --platform=linux --arch=x64 @tailwindcss/oxide-linux-x64-musl
+RUN npm install --platform=linux --arch=x64 lightningcss-linux-x64-musl
 RUN npx prisma generate
 EXPOSE 3000
 # The real DATABASE_URL will be provided at runtime via environment variables
