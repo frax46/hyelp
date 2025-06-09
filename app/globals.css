@@ -870,3 +870,204 @@ main {
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-out forwards;
 }
+
+/* Enhanced Interactive Elements */
+.interactive-button {
+  @apply transition-all duration-300 ease-in-out transform;
+  position: relative;
+  overflow: hidden;
+}
+
+.interactive-button:hover {
+  @apply scale-105 shadow-lg;
+}
+
+.interactive-button:active {
+  @apply scale-95;
+  transform: scale(0.95);
+}
+
+.interactive-button:focus {
+  @apply outline-none ring-2 ring-green-400 ring-opacity-50;
+}
+
+/* Click ripple effect */
+.interactive-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.interactive-button:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Feature cards interactive effects */
+.feature-card {
+  @apply transition-all duration-300 ease-in-out transform cursor-pointer;
+  position: relative;
+}
+
+.feature-card:hover {
+  @apply shadow-xl scale-105;
+  transform: translateY(-8px) scale(1.02);
+}
+
+.feature-card:active {
+  @apply scale-100;
+  transform: translateY(-4px) scale(1.01);
+}
+
+/* Review cards interactive effects */
+.review-card {
+  @apply transition-all duration-300 ease-in-out transform cursor-pointer;
+  position: relative;
+}
+
+.review-card:hover {
+  @apply shadow-xl;
+  transform: translateY(-4px);
+}
+
+.review-card:hover .review-card-button {
+  @apply bg-green-700 shadow-md;
+  transform: translateY(-2px);
+}
+
+/* Enhanced button styles */
+.btn-primary {
+  @apply bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 ease-in-out transform;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary:hover {
+  @apply bg-green-700 shadow-lg;
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  @apply bg-green-800;
+  transform: translateY(0);
+}
+
+.btn-primary:focus {
+  @apply outline-none ring-2 ring-green-400 ring-opacity-50;
+}
+
+/* Pulse animation for important buttons */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+}
+
+.btn-pulse {
+  animation: pulse-glow 2s infinite;
+}
+
+/* Enhanced link styles */
+.interactive-link {
+  @apply transition-all duration-200 ease-in-out;
+  position: relative;
+}
+
+.interactive-link:hover {
+  @apply text-green-700;
+  transform: translateY(-1px);
+}
+
+.interactive-link:active {
+  transform: translateY(0);
+}
+
+/* Underline animation for links */
+.interactive-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width 0.3s ease-in-out;
+}
+
+.interactive-link:hover::after {
+  width: 100%;
+}
+
+/* Search button enhanced styles */
+.search-button {
+  @apply bg-green-600 text-white rounded-lg font-medium transition-all duration-300 ease-in-out transform;
+  position: relative;
+  overflow: hidden;
+}
+
+.search-button:hover {
+  @apply bg-green-700 shadow-lg;
+  transform: translateY(-2px) scale(1.05);
+}
+
+.search-button:active {
+  @apply bg-green-800;
+  transform: translateY(0) scale(1.02);
+}
+
+.search-button:focus {
+  @apply outline-none ring-2 ring-green-400 ring-opacity-50;
+}
+
+/* Icon rotation on hover */
+.rotate-on-hover {
+  @apply transition-transform duration-300;
+}
+
+.rotate-on-hover:hover {
+  transform: rotate(10deg);
+}
+
+/* Bounce animation for icons */
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.bounce-on-hover:hover {
+  animation: bounce-subtle 0.6s ease-in-out;
+}
+
+/* Enhanced testimonial cards */
+.testimonial-card {
+  @apply transition-all duration-300 ease-in-out transform;
+}
+
+.testimonial-card:hover {
+  @apply shadow-xl;
+  transform: translateY(-6px);
+}
+
+/* Number badges with hover effect */
+.number-badge {
+  @apply transition-all duration-300 ease-in-out transform;
+}
+
+.number-badge:hover {
+  @apply scale-110 shadow-lg;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}

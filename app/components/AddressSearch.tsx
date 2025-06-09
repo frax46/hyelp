@@ -217,17 +217,17 @@ export default function AddressSearch({
       <div className="flex w-full shadow-lg rounded-lg overflow-hidden transition-all duration-300">
         <div className="flex-grow flex items-center bg-white border-0 rounded-l-lg pl-3">
           <MapPin className="h-5 w-5 text-green-500 mr-2" />
-          <Input
+        <Input
             ref={inputRef}
-            type="text"
-            placeholder={placeholder}
-            value={query}
-            onChange={handleInputChange}
+          type="text"
+          placeholder={placeholder}
+          value={query}
+          onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             onFocus={handleInputFocus}
             className="flex-grow border-0 shadow-none h-[60px] text-lg font-medium px-1 focus:ring-0 focus:border-0 focus-visible:ring-0"
-            aria-label="Search for an address"
-          />
+          aria-label="Search for an address"
+        />
         </div>
         <Button 
           type="button" 
@@ -282,7 +282,7 @@ export default function AddressSearch({
                 <div className="flex items-center text-amber-500 ml-2 text-sm">
                   <Star className="h-4 w-4 mr-1 fill-current" />
                   <span>{suggestion.reviewCount}</span>
-                </div>
+            </div>
               )}
             </li>
           ))}

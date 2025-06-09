@@ -190,19 +190,19 @@ export default function Home() {
           
           <div className="features-grid">
             <div className="text-center">
-              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl font-bold">1</div>
+              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl font-bold number-badge">1</div>
               <h3 className="feature-title">Search a Neighborhood</h3>
               <p className="feature-description">Enter an address or neighborhood name to find detailed information and reviews.</p>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl font-bold">2</div>
+              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl font-bold number-badge">2</div>
               <h3 className="feature-title">Explore Reviews & Data</h3>
               <p className="feature-description">Read authentic reviews from residents and explore comprehensive neighborhood data.</p>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl font-bold">3</div>
+              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-xl font-bold number-badge">3</div>
               <h3 className="feature-title">Share Your Experience</h3>
               <p className="feature-description">Contribute to the community by sharing your own neighborhood experiences.</p>
             </div>
@@ -211,7 +211,7 @@ export default function Home() {
           <div className="mt-16 text-center">
             <button 
               onClick={() => scrollToSection(searchRef)}
-              className="search-button px-8 py-3"
+              className="search-button interactive-button px-8 py-3 btn-pulse"
             >
               Start Exploring
             </button>
@@ -257,7 +257,7 @@ export default function Home() {
               </div>
             ) : (
               recentReviews.map((review, index) => (
-                <div key={review.id} className="feature-card flex flex-col">
+                <div key={review.id} className="feature-card review-card flex flex-col">
                   <div className="h-40 bg-green-50 mb-4 rounded flex items-center justify-center flex-col">
                     <svg 
                       xmlns="http://www.w3.org/2000/svg" 
@@ -267,22 +267,22 @@ export default function Home() {
                       strokeWidth="2" 
                       strokeLinecap="round" 
                       strokeLinejoin="round" 
-                      className="w-16 h-16 text-green-600 mb-2"
+                      className="w-16 h-16 text-green-600 mb-2 bounce-on-hover"
                     >
                       <path d="M9.5 6.5C9.5 8.43 7.93 10 6 10S2.5 8.43 2.5 6.5 4.07 3 6 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5S2.5 19.43 2.5 17.5 4.07 14 6 14s3.5 1.57 3.5 3.5zm11-11c0 1.93-1.57 3.5-3.5 3.5S13.5 8.43 13.5 6.5 15.07 3 17 3s3.5 1.57 3.5 3.5zm0 11c0 1.93-1.57 3.5-3.5 3.5s-3.5-1.57-3.5-3.5 1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5zm-12.75-3h7.5c.41 0 .75.34.75.75s-.34.75-.75.75h-7.5c-.41 0-.75-.34-.75-.75s.34-.75.75-.75z" />
                     </svg>
                     <span className="text-green-700 font-medium">{review.address.city} Review</span>
-                </div>
+                  </div>
                   <div className="flex-1 flex flex-col">
-                  <div className="flex justify-between items-center mb-3">
+                    <div className="flex justify-between items-center mb-3">
                       <h3 className="feature-title truncate pr-2">{review.address.streetAddress}</h3>
                       <div className="flex items-center flex-shrink-0">
                         <span className="text-green-700 font-medium mr-1">{review.averageScore.toFixed(1)}</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-700" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-700 rotate-on-hover" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      </div>
                     </div>
-                  </div>
                     <p className="feature-description mb-4 text-sm overflow-hidden text-ellipsis">
                       {review.address.city}, {review.address.state} - <FormattedDate dateString={review.createdAt} format="short" />
                     </p>
@@ -297,14 +297,14 @@ export default function Home() {
                         {review.isAnonymous ? "Anonymous" : (review.userEmail || "Unknown")}
                       </span>
                       <button 
-                        className="px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors duration-300 whitespace-nowrap shadow-sm"
+                        className="review-card-button interactive-button px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors duration-300 whitespace-nowrap shadow-sm"
                         onClick={() => router.push(`/address/${review.addressId}`)}
                       >
-                      View Details
-                    </button>
+                        View Details
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
               ))
             )}
           </div>
@@ -347,12 +347,12 @@ export default function Home() {
                 role: "Business Traveler"
               }
             ].map((testimonial, index) => (
-              <div key={index} className="bg-white/60 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+              <div key={index} className="testimonial-card bg-white/60 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
                 <div className="flex flex-col h-full">
                   <div className="flex justify-between items-center mb-6">
                     <svg 
                       xmlns="http://www.w3.org/2000/svg" 
-                      className="h-8 w-8 text-green-600"
+                      className="h-8 w-8 text-green-600 bounce-on-hover"
                       viewBox="0 0 24 24" 
                       fill="currentColor"
                     >
@@ -360,12 +360,12 @@ export default function Home() {
                     </svg>
                     <Link
                       href="/submit-review"
-                      className="text-green-600 hover:text-green-700 flex items-center gap-1"
+                      className="interactive-link text-green-600 hover:text-green-700 flex items-center gap-1"
                       title="Add your own review"
                     >
                       <svg 
                         xmlns="http://www.w3.org/2000/svg" 
-                        className="h-5 w-5" 
+                        className="h-5 w-5 rotate-on-hover" 
                         viewBox="0 0 20 20" 
                         fill="currentColor"
                       >
@@ -393,11 +393,11 @@ export default function Home() {
           <div className="mt-12 flex justify-center">
             <Link 
               href="/submit-review" 
-              className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors duration-300 flex items-center shadow-md"
+              className="btn-primary interactive-button px-6 py-3 rounded-lg font-medium flex items-center shadow-md"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
-                className="h-5 w-5 mr-2" 
+                className="h-5 w-5 mr-2 bounce-on-hover" 
                 viewBox="0 0 20 20" 
                 fill="currentColor"
               >
@@ -421,7 +421,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               href="/about" 
-              className="px-8 py-3 bg-transparent border border-white text-white font-medium rounded hover:bg-white/10 transition-all duration-300"
+              className="interactive-button px-8 py-3 bg-transparent border border-white text-white font-medium rounded hover:bg-white/10 transition-all duration-300"
             >
               Learn More
             </Link>
