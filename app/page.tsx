@@ -56,10 +56,8 @@ interface Review {
 
 export default function Home() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
   const [recentReviews, setRecentReviews] = useState<Review[]>([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
-  const [showSearchForm, setShowSearchForm] = useState(false);
   
   // Fetch recent reviews
   useEffect(() => {
@@ -83,40 +81,12 @@ export default function Home() {
   
   // Refs for GSAP animations
   const heroRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const descriptionRef = useRef<HTMLParagraphElement>(null);
-  const searchFormRef = useRef<HTMLDivElement>(null);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLElement>(null);
   const howItWorksRef = useRef<HTMLElement>(null);
   const searchRef = useRef<HTMLElement>(null);
   
   // GSAP animations
   useEffect(() => {
-    // Hero section animations
-    const heroTl = gsap.timeline();
-    
-    heroTl.fromTo(
-      headingRef.current,
-      { y: 50, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
-    ).fromTo(
-      descriptionRef.current,
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-      "-=0.4"
-    ).fromTo(
-      searchFormRef.current,
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-      "-=0.3"
-    ).fromTo(
-      imageContainerRef.current,
-      { x: 50, opacity: 0 },
-      { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" },
-      "-=0.5"
-    );
-    
     // Features section animations with ScrollTrigger
     if (featuresRef.current && typeof window !== "undefined") {
       const featureItems = featuresRef.current.querySelectorAll('.feature-card');
@@ -153,74 +123,6 @@ export default function Home() {
       {/* Hero Section with Carousel */}
       <section ref={heroRef} className="hero-section-carousel">
         <HeroCarousel />
-        
-        {/* Search button that reveals search form when clicked */}
-        <div className="absolute inset-x-0 bottom-0 z-30 flex justify-center items-center">
-          <div className="search-container-wrapper mb-12 md:mb-16 flex flex-col items-center" style={{ width: '100%', maxWidth: '500px' }}>
-            <div 
-              className="search-form-container w-full transition-all duration-500 ease-in-out"
-              style={{ 
-                maxHeight: showSearchForm ? '400px' : '0px',
-                opacity: showSearchForm ? 1 : 0,
-                overflow: 'hidden',
-                transform: showSearchForm ? 'translateY(0)' : 'translateY(20px)',
-                marginBottom: showSearchForm ? '1rem' : '0'
-              }}
-            >
-              <div className="search-arrow"></div>
-              <div ref={searchFormRef} className="search-container glass-morphism">
-                <div className="text-center">
-                  <span className="text-gradient">Find Your Perfect Neighborhood</span>
-                </div>
-                <AddressSearch 
-                  placeholder="Enter an address"
-                  buttonText="EXPLORE"
-                  redirectToResults={true}
-                />
-              </div>
-            </div>
-            
-            <button
-              className="search-toggle-btn"
-              onClick={() => setShowSearchForm(!showSearchForm)}
-              aria-label="Toggle search form"
-            >
-              {showSearchForm ? (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Trusted By Section */}
-      <section className="section section-alt">
-        <div className="container">
-          <h2 className="text-center text-xl font-medium text-gray-800 uppercase tracking-wide mb-12">
-            Trusted by homebuyers across the country
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
-            <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
-              <Image src="/images/logo.png" alt="Binocolo Logo" width={90} height={30} />
-            </div>
-            <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
-              <span className="text-gray-400 font-medium">Real Estate Partner</span>
-            </div>
-            <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
-              <span className="text-gray-400 font-medium">Moving Service</span>
-            </div>
-            <div className="w-32 h-12 flex items-center justify-center bg-white rounded shadow-sm">
-              <span className="text-gray-400 font-medium">Home Inspector</span>
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* Features Section */}
