@@ -52,24 +52,24 @@ export default function HeroCarousel() {
   // console.log("Images array initialized with", images.length, "images");
 
   const goToSlide = (index: number) => {
-    // console.log("goToSlide called with index:", index);
+    console.log("goToSlide called with index:", index);
     setCurrentIndex(index);
   };
 
   const goToPrevious = () => {
-    // console.log("goToPrevious called, current index:", currentIndex);
+    console.log("goToPrevious called, current index:", currentIndex);
     const isFirstSlide = currentIndex === 0;
     const newIndex = isFirstSlide ? images.length - 1 : currentIndex - 1;
     setCurrentIndex(newIndex);
-    // console.log("New index after goToPrevious:", newIndex);
+    console.log("New index after goToPrevious:", newIndex);
   };
 
   const goToNext = () => {
-    // console.log("goToNext called, current index:", currentIndex);
+    console.log("goToNext called, current index:", currentIndex);
     const isLastSlide = currentIndex === images.length - 1;
     const newIndex = isLastSlide ? 0 : currentIndex + 1;
     setCurrentIndex(newIndex);
-    // console.log("New index after goToNext:", newIndex);
+    console.log("New index after goToNext:", newIndex);
   };
 
   // Auto-advance slides
@@ -154,18 +154,30 @@ export default function HeroCarousel() {
       {/* Carousel controls - arrow navigation */}
       <div className="absolute bottom-12 left-8 sm:left-12 md:left-16 lg:left-24 xl:left-32 z-20 flex space-x-3">
         <button 
-          onClick={goToPrevious}
-          className="p-3 rounded-full bg-black/40 backdrop-blur-sm text-white hover:bg-black/60 transition-all"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("Previous button clicked!");
+            goToPrevious();
+          }}
+          className="p-3 rounded-full bg-black/40 backdrop-blur-sm text-white hover:bg-black/60 transition-all cursor-pointer"
           aria-label="Previous slide"
+          style={{ pointerEvents: 'auto' }}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
         <button 
-          onClick={goToNext}
-          className="p-3 rounded-full bg-black/40 backdrop-blur-sm text-white hover:bg-black/60 transition-all"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("Next button clicked!");
+            goToNext();
+          }}
+          className="p-3 rounded-full bg-black/40 backdrop-blur-sm text-white hover:bg-black/60 transition-all cursor-pointer"
           aria-label="Next slide"
+          style={{ pointerEvents: 'auto' }}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -181,10 +193,16 @@ export default function HeroCarousel() {
         {images.map((image, index) => (
           <div 
             key={index}
-            onClick={() => goToSlide(index)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log("Thumbnail clicked for index:", index);
+              goToSlide(index);
+            }}
             className={`cursor-pointer w-16 h-16 lg:w-20 lg:h-20 rounded-md overflow-hidden transition-all ${
               index === currentIndex ? "border-2 border-green-500 scale-105" : "border border-white/40"
             }`}
+            style={{ pointerEvents: 'auto' }}
           >
             <div className="relative w-full h-full">
               <div 
